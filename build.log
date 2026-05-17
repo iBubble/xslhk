@@ -1,0 +1,51 @@
+nohup: ignoring input
+
+> app@0.1.0 build
+> next build
+
+▲ Next.js 16.2.4 (Turbopack)
+- Environments: .env
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 9.6s
+  Running TypeScript ...
+  Finished TypeScript in 4.3s ...
+  Collecting page data using 1 worker ...
+  Generating static pages using 1 worker (0/20) ...
+  Generating static pages using 1 worker (5/20) 
+  Generating static pages using 1 worker (10/20) 
+  Generating static pages using 1 worker (15/20) 
+✓ Generating static pages using 1 worker (20/20) in 551ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /about
+├ ƒ /admin
+├ ƒ /admin/cases
+├ ƒ /admin/contacts
+├ ƒ /admin/news
+├ ƒ /api/auth/[...nextauth]
+├ ○ /auth/signin
+├ ○ /cases
+├ ƒ /cases/[id]
+├ ○ /contact
+├ ○ /demo1
+├ ○ /demo2
+├ ○ /demo3
+├ ○ /demo4
+├ ○ /demo5
+├ ○ /news
+├ ƒ /news/[id]
+├ ○ /repair
+├ ○ /services
+└ ○ /training
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+[1m[34mUse --update-env to update environment variables[39m[22m
+[32m[PM2] [39mApplying action reloadProcessId on app [samplesite](ids: [ 0 ])
+[32m[PM2] [39m[samplesite](0) ✓

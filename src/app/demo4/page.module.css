@@ -1,0 +1,93 @@
+/* Demo 4 - Topxgun Style */
+.container {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #1a1a1a;
+  background: #fff;
+  line-height: 1.6;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 5%;
+  height: 80px;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid #eee;
+}
+.logo { display: flex; align-items: center; text-decoration: none; }
+.logoImg { height: 60px; width: auto; }
+.nav { display: flex; gap: 40px; }
+.navItem { color: #333; text-decoration: none; font-size: 16px; font-weight: 600; transition: color 0.3s; }
+.navItem:hover { color: #ff5722; }
+
+/* Hero */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 700px;
+  background: url('/demo/demo4_hero.png') center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 10%;
+}
+.heroOverlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(to right, rgba(0,0,0,0.8), rgba(0,0,0,0));
+}
+.heroContent { position: relative; z-index: 2; color: #fff; max-width: 600px; }
+.heroTitle { font-size: 64px; font-weight: 900; margin-bottom: 20px; line-height: 1.1; letter-spacing: -2px; }
+.heroDesc { font-size: 22px; margin-bottom: 40px; opacity: 0.9; }
+.heroBtn { background: #ff5722; color: #fff; border: none; padding: 15px 40px; font-size: 18px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: background 0.3s; }
+.heroBtn:hover { background: #e64a19; }
+
+/* Products Section */
+.products { padding: 100px 5%; background: #f9f9f9; text-align: center; }
+.sectionTitle { font-size: 42px; font-weight: 800; margin-bottom: 20px; color: #111; letter-spacing: -1px; }
+.sectionSubtitle { font-size: 18px; color: #666; margin-bottom: 60px; }
+.productGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+.productCard { background: #fff; padding: 50px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); text-align: left; transition: transform 0.3s; }
+.productCard:hover { transform: translateY(-10px); }
+.productImg { width: 100%; height: 300px; object-fit: contain; margin-bottom: 30px; }
+.productTag { display: inline-block; background: #ff5722; color: #fff; padding: 5px 12px; font-size: 12px; font-weight: bold; border-radius: 20px; margin-bottom: 15px; }
+.productName { font-size: 32px; font-weight: 800; margin-bottom: 15px; color: #111; }
+.productDesc { font-size: 16px; color: #666; line-height: 1.8; margin-bottom: 30px; }
+.productLink { color: #ff5722; font-weight: bold; text-decoration: none; font-size: 16px; }
+
+/* System Banner */
+.systemBanner {
+  display: flex;
+  background: #111;
+  color: #fff;
+  align-items: center;
+  margin: 100px 5%;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.systemText { flex: 1; padding: 80px; }
+.systemTitle { font-size: 36px; font-weight: 800; margin-bottom: 20px; }
+.systemDesc { font-size: 16px; color: #aaa; line-height: 1.8; margin-bottom: 40px; }
+.systemData { display: flex; gap: 40px; }
+.dataBlock h4 { font-size: 36px; font-weight: 900; color: #ff5722; margin-bottom: 5px; }
+.dataBlock p { font-size: 14px; color: #888; }
+.systemImg { flex: 1; height: 500px; object-fit: cover; }
+
+/* Footer */
+.footer { background: #000; color: #fff; padding: 80px 5% 40px 5%; }
+.footerInner { display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding-bottom: 40px; margin-bottom: 40px; }
+.footerBrand { max-width: 300px; }
+.footerBrand h2 { font-size: 28px; font-weight: 900; margin-bottom: 20px; }
+.footerBrand p { font-size: 14px; color: #666; line-height: 1.8; }
+.footerLinks { display: flex; gap: 80px; }
+.linkGroup h4 { font-size: 16px; font-weight: bold; margin-bottom: 20px; color: #fff; }
+.linkGroup ul { list-style: none; padding: 0; }
+.linkGroup li { margin-bottom: 12px; }
+.linkGroup a { color: #888; text-decoration: none; font-size: 14px; transition: color 0.3s; }
+.linkGroup a:hover { color: #ff5722; }
+.footerBottom { text-align: left; font-size: 13px; color: #666; }

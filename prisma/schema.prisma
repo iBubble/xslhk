@@ -1,0 +1,109 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  role      String   @default("ADMIN")
+  createdAt DateTime @default(now())
+}
+
+// 首页 Hero 轮播
+model HeroSlide {
+  id        Int      @id @default(autoincrement())
+  title_tag String   @default("云南星势力航空科技有限公司")
+  title     String
+  subtitle  String
+  image     String
+  btnText   String   @default("了解更多")
+  btnLink   String   @default("/about")
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+// 公司动态（同步公众号文章）
+model News {
+  id        Int      @id @default(autoincrement())
+  date      String
+  title     String
+  excerpt   String
+  content   String   @default("")
+  image     String
+  wxLink    String   @default("")   // 原公众号文章链接
+  createdAt DateTime @default(now())
+}
+
+// 无人机维修课程
+model CourseItem {
+  id          Int      @id @default(autoincrement())
+  title       String
+  category    String   @default("维修课程")
+  description String
+  content     String   @default("")
+  image       String
+  duration    String   @default("")
+  price       String   @default("")
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+// 风采展示
+model ShowcaseItem {
+  id        Int      @id @default(autoincrement())
+  title     String
+  category  String   @default("风采展示")
+  image     String
+  content   String   @default("")
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+// 项目合作
+model CooperationProject {
+  id          Int      @id @default(autoincrement())
+  title       String
+  partner     String   @default("")
+  description String
+  content     String   @default("")
+  image       String
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+// 关于星势力（单条内容）
+model AboutContent {
+  id          Int      @id @default(autoincrement())
+  section     String   @unique  // e.g. "intro", "mission", "team"
+  title       String
+  content     String
+  image       String   @default("")
+  updatedAt   DateTime @updatedAt
+}
+
+// 联系我们 - 提交记录
+model ContactRequest {
+  id        Int      @id @default(autoincrement())
+  name      String
+  phone     String
+  email     String   @default("")
+  message   String   @default("")
+  type      String
+  status    String   @default("PENDING") // PENDING, PROCESSING, COMPLETED
+  createdAt DateTime @default(now())
+}
+
+// 系统配置表
+model SystemConfig {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

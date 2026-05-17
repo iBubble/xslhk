@@ -1,0 +1,127 @@
+/* Demo 3 - 111uav Clone (Agricultural & Enterprise Drones) */
+.container {
+  font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+  color: #333;
+  background: #fff;
+  line-height: 1.6;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 5%;
+  height: 70px;
+  background: #111;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+.logo { display: flex; align-items: center; text-decoration: none;}
+.logoImg { height: 60px; width: auto; filter: brightness(0) invert(1); }
+.nav { display: flex; gap: 30px; height: 100%; align-items: center;}
+.navItem { color: #ccc; text-decoration: none; font-size: 15px; transition: color 0.3s; }
+.navItem:hover { color: #fff; }
+
+/* Hero */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  background: url('/demo/demo3_hero.png') center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+}
+.heroOverlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+}
+.heroContent { position: relative; z-index: 2; }
+.heroTitle { font-size: 48px; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px;}
+.heroDesc { font-size: 18px; margin-bottom: 30px; }
+.heroBtn {
+  background: transparent;
+  color: #fff;
+  border: 2px solid #fff;
+  padding: 10px 30px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.heroBtn:hover { background: #fff; color: #111; }
+
+/* Main Categories */
+.categories {
+  padding: 80px 5%;
+  text-align: center;
+}
+.sectionTitle { font-size: 32px; font-weight: bold; margin-bottom: 20px; color: #222; }
+.sectionSubtitle { font-size: 16px; color: #666; margin-bottom: 50px; }
+.catGrid {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+.catCard {
+  width: 300px;
+  text-align: center;
+}
+.catImg {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+.catTitle { font-size: 20px; font-weight: bold; margin-bottom: 10px; color: #333; }
+.catDesc { font-size: 14px; color: #666; }
+
+/* Feature Section */
+.featureSection {
+  background: #f4f4f4;
+  padding: 80px 5%;
+  display: flex;
+  align-items: center;
+  gap: 50px;
+}
+.featureImg {
+  flex: 1;
+  max-width: 500px;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.featureText {
+  flex: 1;
+}
+.featureTitle { font-size: 32px; font-weight: bold; margin-bottom: 20px; color: #222; }
+.featureDesc { font-size: 16px; color: #555; line-height: 1.8; margin-bottom: 20px; }
+.featureList { list-style: none; padding: 0; }
+.featureList li { padding: 10px 0; border-bottom: 1px solid #ddd; color: #444; }
+
+/* Footer */
+.footer {
+  background: #1a1a1a;
+  color: #888;
+  padding: 60px 5% 20px 5%;
+  font-size: 14px;
+}
+.footerGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  margin-bottom: 40px;
+}
+.footerCol h4 { color: #eee; font-size: 16px; margin-bottom: 20px; }
+.footerCol ul { list-style: none; padding: 0; }
+.footerCol li { margin-bottom: 10px; }
+.footerCol a { color: #888; text-decoration: none; transition: color 0.3s; }
+.footerCol a:hover { color: #fff; }
+.footerBottom { text-align: center; border-top: 1px solid #333; padding-top: 20px; }

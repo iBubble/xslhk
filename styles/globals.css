@@ -1,0 +1,68 @@
+/* Dark theme design tokens */
+:root {
+  --color-bg: #0d0d0d;
+  --color-surface: rgba(255,255,255,0.05);
+  --color-primary: #1e90ff;
+  --color-primary-hover: #1c86ee;
+  --color-text: #e0e0e0;
+  --color-muted: #777;
+  --radius: 8px;
+  --shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Reset & base */
+html, body, #__next {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Global layout */
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Card (glassmorphism) */
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
+  padding: 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+/* Links & buttons */
+a, button {
+  color: var(--color-primary);
+  text-decoration: none;
+  cursor: pointer;
+}
+a:hover, button:hover {
+  color: var(--color-primary-hover);
+}
+
+/* Form elements */
+input, textarea, select {
+  background: var(--color-surface);
+  border: 1px solid var(--color-muted);
+  color: var(--color-text);
+  border-radius: var(--radius);
+  padding: 0.5rem;
+}
+input:focus, textarea:focus, select:focus {
+  outline: 2px solid var(--color-primary);
+}
+
+/* Utility */
+.mt-2 { margin-top: 0.5rem; }
+.mb-2 { margin-bottom: 0.5rem; }
