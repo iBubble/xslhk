@@ -252,7 +252,7 @@ async function main() {
     {
       title: '工程师团队使用专业示波器和频谱仪调试自研机载通信基带板',
       category: '团队风采',
-      image: unsplashImages[4],
+      image: '/card_repair.png',
       sortOrder: 16
     },
     {
