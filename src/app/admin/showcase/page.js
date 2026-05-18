@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { getServerSession } from "next-auth/next";
 import { redirect } from 'next/navigation';
 import RichEditor from '../../../components/RichEditor';
-
+import AdminBatchTable from '../../../components/AdminBatchTable';
 export default async function AdminShowcase({ searchParams }) {
   const session = await getServerSession();
   if (!session) redirect('/auth/signin');
@@ -105,45 +105,24 @@ export default async function AdminShowcase({ searchParams }) {
         </form>
       </div>
 
-      {/* Grid Preview */}
-      {items.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1.2rem', marginBottom: '2rem' }}>
-          {items.map(item => (
-            <div key={item.id} style={{ background: '#0e1017', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '10px', overflow: 'hidden' }}>
-              <img src={item.image} alt={item.title} style={{ width: '100%', height: '160px', objectFit: 'cover' }} />
-              <div style={{ padding: '0.8rem' }}>
-                <span style={{ background: 'rgba(245,158,11,0.15)', color: '#f59e0b', padding: '2px 6px', borderRadius: '3px', fontSize: '0.72rem' }}>{item.category}</span>
-                <p style={{ color: '#f8fafc', fontSize: '0.85rem', marginTop: '0.4rem', fontFamily: 'inherit', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.title}</p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.8rem', paddingTop: '0.6rem', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                  <a href={`/admin/showcase?edit=${item.id}`} style={{
-                    display: 'inline-block',
-                    background: 'rgba(59,130,246,0.1)',
-                    color: '#60a5fa',
-                    textDecoration: 'none',
-                    padding: '4px 10px',
-                    borderRadius: '4px',
-                    fontSize: '0.78rem',
-                    fontWeight: 500,
-                  }}>
-                    编辑
-                  </a>
-                  <form action={deleteItem}>
-                    <input type="hidden" name="id" value={item.id} />
-                    <button type="submit" style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: 'none', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.78rem' }}>删除</button>
-                  </form>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {items.length === 0 && (
-        <div style={{ background: '#0e1017', border: '1px dashed rgba(255,255,255,0.1)', borderRadius: '12px', padding: '4rem', textAlign: 'center', color: '#475569' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🖼️</div>
-          <p>暂无图片，点击上方添加展示图片</p>
-        </div>
-      )}
+      {/* List */}
+      <div style={{ background: '#0e1017', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '2rem' }}>
+        <h2 style={{ fontSize: '1.1rem', marginBottom: '1.5rem', color: '#94a3b8' }}>全部图片（{items.length}）</h2>
+        <AdminBatchTable
+          model="showcaseItem"
+          items={items}
+          fields={[
+            { key: 'id', label: 'ID', style: { color: '#475569' } },
+            { key: 'category', label: '分类', type: 'badge' },
+            { key: 'image', label: '图片', type: 'image' },
+            { key: 'title', label: '标题', maxWidth: '300px' },
+            { key: 'sortOrder', label: '排序' },
+          ]}
+          deleteAction={deleteItem}
+          editBasePath="/admin/showcase"
+          emptyText="暂无图片，点击上方添加"
+        />
+      </div>
     </div>
   );
 }

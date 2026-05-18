@@ -3,6 +3,8 @@ import { revalidatePath } from 'next/cache';
 import { getServerSession } from "next-auth/next";
 import { redirect } from 'next/navigation';
 import RichEditor from '../../../components/RichEditor';
+import WeChatSyncButton from '../../../components/WeChatSyncButton';
+import AdminBatchTable from '../../../components/AdminBatchTable';
 
 export default async function AdminNews({ searchParams }) {
   const session = await getServerSession();
@@ -12,7 +14,7 @@ export default async function AdminNews({ searchParams }) {
   const editId = params?.edit;
   const editItem = (editId && !isNaN(parseInt(editId))) ? await prisma.news.findUnique({ where: { id: parseInt(editId) } }) : null;
 
-  const newsList = await prisma.news.findMany({ orderBy: { id: 'desc' } });
+  const newsList = await prisma.news.findMany({ orderBy: { date: 'desc' } });
 
   async function deleteNews(formData) {
     'use server';
@@ -57,7 +59,10 @@ export default async function AdminNews({ searchParams }) {
 
   return (
     <div>
-      <h1 style={{ fontSize: '1.8rem', fontWeight: 600, marginBottom: '2rem', color: '#f8fafc' }}>公司动态管理</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <h1 style={{ fontSize: '1.8rem', fontWeight: 600, margin: 0, color: '#f8fafc' }}>公司动态管理</h1>
+        <WeChatSyncButton />
+      </div>
 
       {/* Create / Edit Form */}
       <div style={{ background: '#0e1017', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '2rem', marginBottom: '2.5rem' }}>
@@ -111,51 +116,20 @@ export default async function AdminNews({ searchParams }) {
       {/* List */}
       <div style={{ background: '#0e1017', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '2rem' }}>
         <h2 style={{ fontSize: '1.1rem', marginBottom: '1.5rem', color: '#94a3b8' }}>全部动态（{newsList.length}）</h2>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-          <thead>
-            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-              {['ID','日期','标题','缩略图','公众号链接','操作'].map(h => (
-                <th key={h} style={{ padding: '0.8rem 0.5rem', color: '#64748b', fontWeight: 500, fontSize: '0.83rem' }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {newsList.map(item => (
-              <tr key={item.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                <td style={{ padding: '1rem 0.5rem', color: '#475569', fontSize: '0.85rem' }}>{item.id}</td>
-                <td style={{ padding: '1rem 0.5rem', fontSize: '0.85rem', color: '#94a3b8' }}>{item.date}</td>
-                <td style={{ padding: '1rem 0.5rem', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.88rem' }}>{item.title}</td>
-                <td style={{ padding: '1rem 0.5rem' }}>
-                  <img src={item.image} alt="thumb" style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
-                </td>
-                <td style={{ padding: '1rem 0.5rem', fontSize: '0.82rem', color: '#64748b', maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {item.wxLink ? <a href={item.wxLink} target="_blank" rel="noreferrer" style={{ color: '#07c160' }}>查看</a> : '-'}
-                </td>
-                <td style={{ padding: '1rem 0.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <a href={`/admin/news?edit=${item.id}`} style={{
-                    display: 'inline-block',
-                    background: 'rgba(59,130,246,0.1)',
-                    color: '#60a5fa',
-                    textDecoration: 'none',
-                    padding: '4px 10px',
-                    borderRadius: '4px',
-                    fontSize: '0.82rem',
-                    fontWeight: 500,
-                  }}>
-                    编辑
-                  </a>
-                  <form action={deleteNews} style={{ display: 'inline' }}>
-                    <input type="hidden" name="id" value={item.id} />
-                    <button type="submit" style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: 'none', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.82rem' }}>删除</button>
-                  </form>
-                </td>
-              </tr>
-            ))}
-            {newsList.length === 0 && (
-              <tr><td colSpan="6" style={{ padding: '2rem 0', textAlign: 'center', color: '#475569' }}>暂无动态，点击上方发布</td></tr>
-            )}
-          </tbody>
-        </table>
+        <AdminBatchTable
+          model="news"
+          items={newsList}
+          fields={[
+            { key: 'id', label: 'ID', style: { color: '#475569' } },
+            { key: 'date', label: '日期', style: { color: '#94a3b8' } },
+            { key: 'title', label: '标题', maxWidth: '300px' },
+            { key: 'image', label: '缩略图', type: 'image' },
+            { key: 'wxLink', label: '公众号链接', type: 'link', linkColor: '#07c160' },
+          ]}
+          deleteAction={deleteNews}
+          editBasePath="/admin/news"
+          emptyText="暂无动态，点击上方发布"
+        />
       </div>
     </div>
   );

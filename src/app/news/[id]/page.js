@@ -14,7 +14,7 @@ export default async function NewsDetail({ params }) {
   const item = await prisma.news.findUnique({ where: { id: parseInt(resolvedParams.id) } });
   if (!item) notFound();
 
-  const others = await prisma.news.findMany({ where: { id: { not: item.id } }, take: 3, orderBy: { id: 'desc' } });
+  const others = await prisma.news.findMany({ where: { id: { not: item.id } }, take: 3, orderBy: { date: 'desc' } });
 
   return (
     <>

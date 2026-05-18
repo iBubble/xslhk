@@ -6,7 +6,8 @@
     "dev": "next dev",
     "dev:watch": "nodemon --watch . --exec \"npm run dev\"",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "wechat-sync": "node scripts/wechat_sync.js"
   },
   "dependencies": {
     "@prisma/client": "^5.15.0",

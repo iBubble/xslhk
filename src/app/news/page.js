@@ -19,7 +19,7 @@ export default async function NewsPage(props) {
   const currentPage = Math.max(1, Math.min(page, totalPages || 1));
 
   const newsList = await prisma.news.findMany({
-    orderBy: { id: 'desc' },
+    orderBy: { date: 'desc' },
     skip: (currentPage - 1) * pageSize,
     take: pageSize,
   });

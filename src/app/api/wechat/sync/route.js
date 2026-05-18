@@ -2,6 +2,45 @@ import { NextResponse } from 'next/server';
 import prisma from '../../../../lib/prisma';
 import { getSystemConfig } from '../../../../lib/config';
 import { revalidatePath } from 'next/cache';
+import crypto from 'crypto';
+
+/**
+ * 🔗 微信公众号服务器配置校验接口 (GET)
+ * 用于微信后台的 "服务器配置" 校验握手。
+ */
+export async function GET(request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const signature = searchParams.get('signature') || '';
+    const timestamp = searchParams.get('timestamp') || '';
+    const nonce = searchParams.get('nonce') || '';
+    const echostr = searchParams.get('echostr') || '';
+
+    // 获取后台配置的 wechat_mp_token
+    const configuredToken = await getSystemConfig('wechat_mp_token');
+    
+    if (!configuredToken) {
+      return new Response('系统未配置 wechat_mp_token，请先在网站后台设置。', { status: 403 });
+    }
+
+    // 微信签名验证算法：
+    // 1. 将token、timestamp、nonce三个参数进行字典序排序
+    // 2. 将三个参数字符串拼接成一个字符串进行sha1加密
+    // 3. 开发者获得加密后的字符串可与signature对比，标识该请求来源于微信
+    const tempArray = [configuredToken.trim(), timestamp, nonce].sort();
+    const tempStr = tempArray.join('');
+    const sha1 = crypto.createHash('sha1').update(tempStr).digest('hex');
+
+    if (sha1 === signature) {
+      return new Response(echostr, { headers: { 'Content-Type': 'text/plain' } });
+    } else {
+      return new Response('签名校验失败', { status: 403 });
+    }
+  } catch (error) {
+    console.error('[WeChat Verification Error]:', error);
+    return new Response('服务器内部错误', { status: 500 });
+  }
+}
 
 /**
  * 🔗 微信公众号文章导入接口 (WeChat Official Account Sync API)

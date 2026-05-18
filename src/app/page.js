@@ -21,7 +21,7 @@ export default async function Home() {
 
   try {
     const results = await Promise.all([
-      prisma.news.findMany({ orderBy: { id: 'desc' }, take: 3 }).catch(() => []),
+      prisma.news.findMany({ orderBy: { date: 'desc' }, take: 3 }).catch(() => []),
       prisma.courseItem.findMany({ orderBy: { id: 'desc' }, take: 3 }).catch(() => []),
       prisma.showcaseItem.findMany({ orderBy: { id: 'desc' }, take: 8 }).catch(() => []),
       prisma.heroSlide.findMany({ orderBy: { sortOrder: 'asc' } }).catch(() => []),

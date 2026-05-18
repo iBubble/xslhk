@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { getServerSession } from "next-auth/next";
 import { redirect } from 'next/navigation';
 import RichEditor from '../../../components/RichEditor';
-
+import AdminBatchTable from '../../../components/AdminBatchTable';
 export default async function AdminCooperation({ searchParams }) {
   const session = await getServerSession();
   if (!session) redirect('/auth/signin');
@@ -109,49 +109,20 @@ export default async function AdminCooperation({ searchParams }) {
       {/* List */}
       <div style={{ background: '#0e1017', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '2rem' }}>
         <h2 style={{ fontSize: '1.1rem', marginBottom: '1.5rem', color: '#94a3b8' }}>全部合作案例（{projects.length}）</h2>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-          <thead>
-            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-              {['ID','项目名称','合作方','封面','排序','操作'].map(h => (
-                <th key={h} style={{ padding: '0.8rem 0.5rem', color: '#64748b', fontWeight: 500, fontSize: '0.83rem' }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {projects.map(item => (
-              <tr key={item.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                <td style={{ padding: '1rem 0.5rem', color: '#475569', fontSize: '0.85rem' }}>{item.id}</td>
-                <td style={{ padding: '1rem 0.5rem', maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.88rem' }}>{item.title}</td>
-                <td style={{ padding: '1rem 0.5rem', color: '#94a3b8', fontSize: '0.85rem' }}>{item.partner || '-'}</td>
-                <td style={{ padding: '1rem 0.5rem' }}>
-                  <img src={item.image} alt="thumb" style={{ width: '60px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
-                </td>
-                <td style={{ padding: '1rem 0.5rem', color: '#94a3b8', fontSize: '0.85rem' }}>{item.sortOrder}</td>
-                <td style={{ padding: '1rem 0.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <a href={`/admin/cooperation?edit=${item.id}`} style={{
-                    display: 'inline-block',
-                    background: 'rgba(59,130,246,0.1)',
-                    color: '#60a5fa',
-                    textDecoration: 'none',
-                    padding: '4px 10px',
-                    borderRadius: '4px',
-                    fontSize: '0.82rem',
-                    fontWeight: 500,
-                  }}>
-                    编辑
-                  </a>
-                  <form action={deleteProject} style={{ display: 'inline' }}>
-                    <input type="hidden" name="id" value={item.id} />
-                    <button type="submit" style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: 'none', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.82rem' }}>删除</button>
-                  </form>
-                </td>
-              </tr>
-            ))}
-            {projects.length === 0 && (
-              <tr><td colSpan="6" style={{ padding: '2rem 0', textAlign: 'center', color: '#475569' }}>暂无合作案例，点击上方添加</td></tr>
-            )}
-          </tbody>
-        </table>
+        <AdminBatchTable
+          model="cooperationProject"
+          items={projects}
+          fields={[
+            { key: 'id', label: 'ID', style: { color: '#475569' } },
+            { key: 'title', label: '项目名称', maxWidth: '220px' },
+            { key: 'partner', label: '合作方' },
+            { key: 'image', label: '封面', type: 'image' },
+            { key: 'sortOrder', label: '排序' },
+          ]}
+          deleteAction={deleteProject}
+          editBasePath="/admin/cooperation"
+          emptyText="暂无合作案例，点击上方添加"
+        />
       </div>
     </div>
   );
