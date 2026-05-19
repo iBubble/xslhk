@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { getServerSession } from "next-auth/next";
 import { redirect } from 'next/navigation';
 import RichEditor from '../../../components/RichEditor';
-
+import { getSystemConfigs, setSystemConfig } from '../../../lib/config';
 export default async function AdminAbout({ searchParams }) {
   const session = await getServerSession();
   if (!session) redirect('/auth/signin');
@@ -11,6 +11,8 @@ export default async function AdminAbout({ searchParams }) {
   const contents = await prisma.aboutContent.findMany();
   const cm = {};
   contents.forEach(c => { cm[c.section] = c; });
+
+  const configs = await getSystemConfigs();
 
   const params = searchParams instanceof Promise ? await searchParams : searchParams;
   const isSuccess = params?.success === '1';
@@ -36,6 +38,17 @@ export default async function AdminAbout({ searchParams }) {
     });
     revalidatePath('/admin/about');
     revalidatePath('/about');
+    redirect('/admin/about?success=1');
+  }
+
+  async function updateQrCode(formData) {
+    'use server';
+    const qrCode = formData.get('contact_qrcode');
+    if (qrCode !== null) {
+      await setSystemConfig('contact_qrcode', qrCode);
+    }
+    revalidatePath('/admin/about');
+    revalidatePath('/contact');
     redirect('/admin/about?success=1');
   }
 
@@ -90,6 +103,21 @@ export default async function AdminAbout({ searchParams }) {
             </form>
           </div>
         ))}
+
+        <div style={{ background: '#0e1017', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px', padding: '2rem' }}>
+          <h2 style={{ fontSize: '1.05rem', color: '#94a3b8', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ background: 'rgba(16,185,129,0.15)', color: '#34d399', padding: '2px 10px', borderRadius: '4px', fontSize: '0.8rem' }}>qrcode</span>
+            公众号二维码
+          </h2>
+          <form action={updateQrCode}>
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.83rem', color: '#64748b' }}>二维码图片路径 *</label>
+              <input name="contact_qrcode" required defaultValue={configs.contact_qrcode || ''} placeholder="/images/fav.png" className="admin-input" />
+              <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.5rem' }}>前台联系页面展示的二维码，请填入相对路径或完整 URL</p>
+            </div>
+            <button type="submit" className="btn-primary" style={{ padding: '0.5rem 1.2rem', fontSize: '0.85rem' }}>保存公众号二维码</button>
+          </form>
+        </div>
       </div>
     </div>
   );
