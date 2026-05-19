@@ -4,6 +4,13 @@
 
 ---
 
+## 📖 详细使用手册 (Manual)
+
+关于**本地开发指南、测试数据注入、后台登录方式、服务器部署流程以及备份策略**，请参阅单独剥离的系统使用手册：
+👉 **[点击阅读《系统使用与维护手册》(Manual.md)](./Manual.md)**
+
+---
+
 ## 🌐 线上环境信息
 
 - **正式域名**: [https://www.ynxslhk.com/](https://www.ynxslhk.com/)
@@ -11,6 +18,38 @@
 - **服务器节点**: 腾讯云 (Tencent Cloud)
 - **部署绝对路径**: `/root/wwwroot/xslhk`
 - **网络协议**: 全站强制 HTTPS (由 Certbot 全自动续签 Let's Encrypt 证书)
+
+---
+
+## 🛠️ 技术栈核心 (Tech Stack)
+
+本项目采用全球领先的 React 生态圈重度构建：
+
+- **核心框架**: [Next.js](https://nextjs.org/) 16.2+ (基于前沿的 App Router 路由架构 & Server Actions 服务端动作机制)
+- **前端库**: React 19.2 (最新的并发特性与 Hook 生态)
+- **编程语言**: TypeScript 5+ (严格的静态类型系统，确保代码健壮性)
+- **运行时环境**: Node.js v20+
+- **数据库 & ORM**: SQLite + Prisma 5.15 (超高性能的关系型数据映射模型)
+- **状态管理 & 认证**: NextAuth.js 4.24 (完善的 OAuth 及凭证登录系统，包含企业级会话管理)
+- **安全密码加密**: bcryptjs (强大的密码哈希加盐算法保障用户凭据安全)
+- **样式方案**: 纯粹 CSS (Vanilla CSS Variables) + 玻璃拟态 (Glassmorphism)，无冗余 CSS 框架。
+- **运维与部署**: PM2 (Node.js 进程级守护与高可用容灾) + Nginx (反向代理)
+
+---
+
+## 📂 核心目录结构
+
+```text
+📦 xslhk
+ ┣ 📂 src
+ ┃ ┣ 📂 app          # Next.js App Router 页面路由层 (含前台展示与 admin 可视化后台)
+ ┃ ┣ 📂 components   # 复用型 React UI 组件 (HomeHeroCarousel, ShowcaseGallery 等)
+ ┃ ┣ 📂 lib          # 共享库与工具函数
+ ┃ ┗ 📂 styles       # 全局样式系统与 CSS 变量 (globals.css)
+ ┣ 📂 public         # 静态公共资源 (本厂实拍 /img_repair.png 等官方核心大图)
+ ┣ 📂 prisma         # 数据库 Schema 与数据注入脚本
+ ┗ 📜 next.config.ts # Next.js 全局配置文件
+```
 
 ---
 
@@ -56,122 +95,6 @@
 - **绕过封锁拦截**：使用底层 cURL 工具结合 Node.js `child_process` 强力打破服务器 fetch 的 IPv6 阻断与腾讯图片防盗链拦截。
 - **图文自动镜像**：仅需传入微信文章链接数组，系统自动解析标题、摘要，并将封面图片物理下载至服务器本地 `/public/wx-images/` 避免 404 破图。
 - **25 篇连发归档**：历史 25 篇精选行业公众号文章已被系统一次性自动抓取并永久镜像落库至“公司动态”模块。
-
----
-
-## 🛠️ 技术栈核心 (Tech Stack)
-
-- **核心框架**: [Next.js](https://nextjs.org/) 16.2+ (基于 App Router & Server Actions)
-- **运行时环境**: Node.js v20+
-- **数据 ORM**: Prisma (连接 SQLite)
-- **状态管理 & 认证**: NextAuth.js (安全密码哈希保障)
-- **样式方案**: 纯粹 CSS (Vanilla CSS Variables) + 玻璃拟态 (Glassmorphism)
-- **进程守护**: PM2
-- **反向代理**: Nginx
-
----
-
-## 📂 核心目录结构
-
-```text
-📦 xslhk
- ┣ 📂 src
- ┃ ┣ 📂 app          # Next.js App Router 页面路由层 (含前台展示与 admin 可视化后台)
- ┃ ┣ 📂 components   # 复用型 React UI 组件 (HomeHeroCarousel, ShowcaseGallery 等)
- ┃ ┣ 📂 lib          # 共享库与工具函数
- ┃ ┗ 📂 styles       # 全局样式系统与 CSS 变量 (globals.css)
- ┣ 📂 public         # 静态公共资源 (本厂实拍 /img_repair.png 等官方核心大图)
- ┣ 📂 prisma         # 数据库 Schema 与数据注入脚本
- ┗ 📜 next.config.ts # Next.js 全局配置文件
-```
-
----
-
-## 🚀 本地开发指南 (Local Development)
-
-首先，安装项目依赖：
-```bash
-npm install
-```
-
-初始化或同步 SQLite 数据库模型，请执行：
-```bash
-npx prisma generate
-npx prisma db push
-```
-
-启动本地开发服务器：
-```bash
-npm run dev
-```
-启动后，打开浏览器访问 [http://localhost:3000](http://localhost:3000) 即可预览。
-
----
-
-## 📋 演示种子数据注入
-
-为便于交付和演示，项目内置了极高规格的真实种子数据脚本：
-* **数据脚本路径**：`prisma/add_seed_data.js`
-* **种子数据内容**：为公司动态、维修课程、风采展示和项目合作四大核心板块，各注入了 **10 篇共计 40 篇**具有极强西南低空行业说服力、图文并茂的真实硬核演示文章。
-* **执行数据注入**：
-  ```bash
-  node prisma/add_seed_data.js
-  ```
-
----
-
-## 🔐 后台安全账户信息
-
-- **后台登录入口**: [https://www.ynxslhk.com/auth/signin](https://www.ynxslhk.com/auth/signin)
-- **默认管理员账户**: `admin`
-- **默认管理员密码**: `Xslhk@2026`
-*(注：密码已加盐哈希存储在数据库中，确保企业信息安全)*
-
----
-
-## 📦 生产环境备份机制
-
-在核心功能全部调试就绪后，我们已为整个项目进行了一次**纯净的生产级压缩包打包**：
-* **备份文件位置**：`/root/wwwroot/xslhk_backup_20260518_full.tar.gz` (位于项目部署 of 上一级目录中)
-* **备份包体积**：**23 MB**
-* **安全剔除项**：为了极速迁移和体积控制，备份已排除了 `.next`、`node_modules` 以及 `.git` 缓存。
-* **快速移植指南**：在新的服务器解压此包后，只需依次运行 `npm install` -> `npm run build` -> `pm2 start`，即可在 1 分钟内 100% 完美复刻当前巅峰运行状态！
-
----
-
-## 🚢 生产环境部署与维护
-
-由于项目在腾讯云服务器采用了 PM2 进程守护以及 Nginx 代理，日常迭代更新请遵循以下流程：
-
-### 1. 编译构建
-当有代码更新或数据库 Schema 调整后，请进入部署目录执行构建：
-```bash
-# 1. 切换到部署目录
-cd /root/wwwroot/xslhk
-
-# 2. 生成 Prisma Client
-npx prisma generate
-
-# 3. 生产环境构建
-npm run build
-```
-
-### 2. 平滑重启
-通过 PM2 执行零宕机热重载（Zero-downtime Reload）或进程重启：
-```bash
-# 平滑热重载
-pm2 reload samplesite
-
-# 强制完全重启 (推荐用于严重更新)
-pm2 restart samplesite
-```
-
-### 3. Nginx 与 SSL 维护
-- Nginx 反向代理配置路径位于 `/etc/nginx/sites-available/tencent.conf`。
-- SSL 证书由 `certbot` 守护，内部注册有 `systemd` 定时任务，全自动续签，无需人工干预。如遇紧急情况需要测试续签逻辑，可执行：
-  ```bash
-  certbot renew --dry-run
-  ```
 
 ---
 *Generated & maintained with ❤️ by Antigravity AI.*
