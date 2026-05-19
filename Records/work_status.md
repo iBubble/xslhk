@@ -1,7 +1,7 @@
 📅 2026-04-23T01:15:00+08:00
 ✅ Done:
 - 成功将项目代码打包传输至服务器 `hk1.liukun.com`
-- 成功配置 Nginx 并配置 Let's Encrypt 证书，开启 https://hk.ynxslhk.com 访问
+- 成功配置 Nginx 并配置 Let's Encrypt 证书，开启 https://www.ynxslhk.com 访问
 - 在服务器上通过 PM2 成功构建并启动了 Next.js 服务
 ⏳ To-Do:
 - 搭建 Prisma 数据模型，联通物理数据库
