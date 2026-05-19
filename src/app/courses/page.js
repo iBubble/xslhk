@@ -38,6 +38,16 @@ export default async function CoursesPage(props) {
 
   return (
     <>
+      <style>{`
+        .course-title-link {
+          color: inherit;
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+        .course-title-link:hover {
+          color: #0056b3;
+        }
+      `}</style>
       <div className="page-hero" style={{ backgroundImage: 'url("/img_repair.png")' }}>
         <div className="page-hero-overlay" />
         <div className="container page-hero-content">
@@ -83,13 +93,19 @@ export default async function CoursesPage(props) {
             {displayCourses.map((course, i) => (
               <div key={course.id ?? i} className="hover-lift" style={{ background: '#fff', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 4px 15px rgba(0,0,0,0.06)' }}>
                 <div style={{ height: '200px', overflow: 'hidden' }}>
-                  <img src={course.image || '/card_repair.png'} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <Link href={`/courses/${course.id}`} style={{ display: 'block', height: '100%' }}>
+                    <img src={course.image || '/card_repair.png'} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </Link>
                 </div>
                 <div style={{ padding: '1.5rem' }}>
                   <span style={{ background: '#e8f0fb', color: '#0056b3', padding: '3px 10px', borderRadius: '4px', fontSize: '0.78rem', fontWeight: 500 }}>
                     {course.category || '维修课程'}
                   </span>
-                  <h3 style={{ margin: '1rem 0 0.6rem', fontSize: '1.1rem', color: '#222' }}>{course.title}</h3>
+                  <h3 style={{ margin: '1rem 0 0.6rem', fontSize: '1.1rem', color: '#222' }}>
+                    <Link href={`/courses/${course.id}`} className="course-title-link">
+                      {course.title}
+                    </Link>
+                  </h3>
                   <p style={{ fontSize: '0.88rem', color: '#666', lineHeight: 1.7, marginBottom: '1.2rem' }}>{course.description}</p>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', borderTop: '1px solid #f0f0f0' }}>
                     {course.duration && <span style={{ fontSize: '0.83rem', color: '#888' }}>⏱ {course.duration}</span>}

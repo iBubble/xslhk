@@ -53,6 +53,14 @@ export default async function NewsPage(props) {
           color: #fff;
           box-shadow: 0 4px 10px rgba(0,86,179,0.25);
         }
+        .news-title-link {
+          color: inherit;
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+        .news-title-link:hover {
+          color: #0056b3;
+        }
       `}</style>
 
       <div className="page-hero" style={{ backgroundImage: 'url("/img_news.png")' }}>
@@ -80,12 +88,18 @@ export default async function NewsPage(props) {
                   display: 'flex', overflow: 'hidden', flexWrap: 'wrap',
                 }}>
                   <div style={{ flex: '0 0 280px', minHeight: '200px', overflow: 'hidden', position: 'relative' }}>
-                    <img src={item.image || '/img_news.png'} alt={item.title}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', minHeight: '200px', display: 'block' }} />
+                    <Link href={`/news/${item.id}`} style={{ display: 'block', width: '100%', height: '100%' }}>
+                      <img src={item.image || '/img_news.png'} alt={item.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', minHeight: '200px', display: 'block' }} />
+                    </Link>
                   </div>
                   <div style={{ flex: 1, padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: '280px' }}>
                     <span style={{ fontSize: '0.83rem', color: '#888', display: 'block', marginBottom: '0.7rem' }}>{item.date}</span>
-                    <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#222', marginBottom: '0.8rem', lineHeight: 1.4 }}>{item.title}</h2>
+                    <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#222', marginBottom: '0.8rem', lineHeight: 1.4 }}>
+                      <Link href={`/news/${item.id}`} className="news-title-link">
+                        {item.title}
+                      </Link>
+                    </h2>
                     <p style={{ color: '#666', fontSize: '0.93rem', lineHeight: 1.8, marginBottom: '1.5rem' }}>{item.excerpt}</p>
                     <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
                       <Link href={`/news/${item.id}`} style={{ color: '#0056b3', fontSize: '0.9rem', fontWeight: 500, borderBottom: '1px solid #0056b3', paddingBottom: '2px' }}>
