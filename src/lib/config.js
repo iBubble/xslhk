@@ -15,6 +15,26 @@ const DEFAULT_CONFIGS = {
   wechat_mp_token: '',
   wechat_mp_aeskey: '',
   wechat_mp_auto_sync: 'false',
+  
+  // 首页数据统计配置
+  home_stat1_num: '500+',
+  home_stat1_label: '培训学员',
+  home_stat2_num: '10+',
+  home_stat2_label: '维修课程',
+  home_stat3_num: '5年+',
+  home_stat3_label: '行业经验',
+  home_stat4_num: '100%',
+  home_stat4_label: '客户满意度',
+
+  // 关于页数据统计配置
+  about_stat1_num: '500+',
+  about_stat1_label: '培训学员',
+  about_stat2_num: '10+',
+  about_stat2_label: '专业课程',
+  about_stat3_num: '5年+',
+  about_stat3_label: '行业经验',
+  about_stat4_num: '50+',
+  about_stat4_label: '合作企业',
 };
 
 async function ensureInitialized() {

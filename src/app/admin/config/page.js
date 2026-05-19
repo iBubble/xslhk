@@ -30,6 +30,16 @@ export default async function AdminConfig({ searchParams }) {
       'wechat_mp_token',
       'wechat_mp_aeskey',
       'wechat_mp_auto_sync',
+      // 首页数据统计字段
+      'home_stat1_num', 'home_stat1_label',
+      'home_stat2_num', 'home_stat2_label',
+      'home_stat3_num', 'home_stat3_label',
+      'home_stat4_num', 'home_stat4_label',
+      // 关于页数据统计字段
+      'about_stat1_num', 'about_stat1_label',
+      'about_stat2_num', 'about_stat2_label',
+      'about_stat3_num', 'about_stat3_label',
+      'about_stat4_num', 'about_stat4_label',
     ];
 
     for (const field of fields) {
@@ -115,6 +125,122 @@ export default async function AdminConfig({ searchParams }) {
           <div style={{ marginBottom: '2rem' }}>
             <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: '#94a3b8', fontWeight: 500 }}>ICP 备案号</label>
             <input name="icp_record" defaultValue={configs.icp_record} className="admin-input" required />
+          </div>
+
+          {/* ===== 🌟 数据统计展示配置 🌟 ===== */}
+          <div style={{
+            background: 'rgba(59, 130, 246, 0.02)',
+            border: '1px solid rgba(59, 130, 246, 0.15)',
+            borderRadius: '12px',
+            padding: '1.8rem',
+            marginBottom: '2rem',
+            position: 'relative',
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: '1.2rem',
+              right: '1.5rem',
+              background: 'rgba(59, 130, 246, 0.12)',
+              color: '#60a5fa',
+              fontSize: '0.72rem',
+              padding: '2px 8px',
+              borderRadius: '99px',
+              fontWeight: 500,
+              border: '1px solid rgba(59, 130, 246, 0.2)',
+            }}>
+              📊 运营数据配置
+            </div>
+
+            <h3 style={{ fontSize: '1rem', color: '#60a5fa', fontWeight: 600, marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              前台运营数据统计修改
+            </h3>
+            <p style={{ color: '#64748b', fontSize: '0.78rem', lineHeight: 1.6, marginBottom: '1.8rem' }}>
+              在此修改首页与关于页的数字统计展示，吸引更多学员与合作伙伴，即时更新。
+            </p>
+
+            {/* 首页数据统计 */}
+            <h4 style={{ fontSize: '0.88rem', color: '#e2e8f0', fontWeight: 600, marginBottom: '1rem', borderLeft: '3px solid #60a5fa', paddingLeft: '0.5rem' }}>
+              首页数据统计条 (Data Strip)
+            </h4>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem', marginBottom: '1.8rem' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>统计项 1 - 数字 (如：500+)</label>
+                <input name="home_stat1_num" defaultValue={configs.home_stat1_num || '500+'} className="admin-input" required />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>统计项 1 - 文字标签 (如：培训学员)</label>
+                <input name="home_stat1_label" defaultValue={configs.home_stat1_label || '培训学员'} className="admin-input" required />
+              </div>
+              
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>统计项 2 - 数字 (如：10+)</label>
+                <input name="home_stat2_num" defaultValue={configs.home_stat2_num || '10+'} className="admin-input" required />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>统计项 2 - 文字标签 (如：维修课程)</label>
+                <input name="home_stat2_label" defaultValue={configs.home_stat2_label || '维修课程'} className="admin-input" required />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>统计项 3 - 数字 (如：5年+)</label>
+                <input name="home_stat3_num" defaultValue={configs.home_stat3_num || '5年+'} className="admin-input" required />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>统计项 3 - 文字标签 (如：行业经验)</label>
+                <input name="home_stat3_label" defaultValue={configs.home_stat3_label || '行业经验'} className="admin-input" required />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>统计项 4 - 数字 (如：100%)</label>
+                <input name="home_stat4_num" defaultValue={configs.home_stat4_num || '100%'} className="admin-input" required />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>统计项 4 - 文字标签 (如：客户满意度)</label>
+                <input name="home_stat4_label" defaultValue={configs.home_stat4_label || '客户满意度'} className="admin-input" required />
+              </div>
+            </div>
+
+            {/* 关于页数据统计 */}
+            <h4 style={{ fontSize: '0.88rem', color: '#e2e8f0', fontWeight: 600, marginBottom: '1rem', borderLeft: '3px solid #60a5fa', paddingLeft: '0.5rem' }}>
+              关于我们页面数据统计条
+            </h4>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>统计项 1 - 数字 (如：500+)</label>
+                <input name="about_stat1_num" defaultValue={configs.about_stat1_num || '500+'} className="admin-input" required />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>统计项 1 - 文字标签 (如：培训学员)</label>
+                <input name="about_stat1_label" defaultValue={configs.about_stat1_label || '培训学员'} className="admin-input" required />
+              </div>
+              
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>统计项 2 - 数字 (如：10+)</label>
+                <input name="about_stat2_num" defaultValue={configs.about_stat2_num || '10+'} className="admin-input" required />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>统计项 2 - 文字标签 (如：专业课程)</label>
+                <input name="about_stat2_label" defaultValue={configs.about_stat2_label || '专业课程'} className="admin-input" required />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>统计项 3 - 数字 (如：5年+)</label>
+                <input name="about_stat3_num" defaultValue={configs.about_stat3_num || '5年+'} className="admin-input" required />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>统计项 3 - 文字标签 (如：行业经验)</label>
+                <input name="about_stat3_label" defaultValue={configs.about_stat3_label || '行业经验'} className="admin-input" required />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>统计项 4 - 数字 (如：50+)</label>
+                <input name="about_stat4_num" defaultValue={configs.about_stat4_num || '50+'} className="admin-input" required />
+              </div>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', color: '#94a3b8' }}>统计项 4 - 文字标签 (如：合作企业)</label>
+                <input name="about_stat4_label" defaultValue={configs.about_stat4_label || '合作企业'} className="admin-input" required />
+              </div>
+            </div>
           </div>
 
           {/* ===== 🌟 微信公众号自动同步接口预留配置 🌟 ===== */}

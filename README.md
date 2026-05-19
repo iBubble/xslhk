@@ -96,5 +96,15 @@
 - **图文自动镜像**：仅需传入微信文章链接数组，系统自动解析标题、摘要，并将封面图片物理下载至服务器本地 `/public/wx-images/` 避免 404 破图。
 - **25 篇连发归档**：历史 25 篇精选行业公众号文章已被系统一次性自动抓取并永久镜像落库至“公司动态”模块。
 
+### 10. 🔍 全局即时智能模糊搜索系统 (Global Real-time Fuzzy Search System)
+- **即时模糊过滤**：在导航栏右侧引入极具未来科技感的搜索入口，触发后唤起玻璃微粒磨砂拟态（Glassmorphism）的全屏遮罩搜索面板，支持快捷键 `ESC` 一键关闭并自动聚焦输入框。
+- **跨表高并发检索**：编写了 `/api/search` 路由，采用 Promise 并行检索机制同时对 SQLite 数据库中的 `courseItem` (课程)、`news` (动态)、`cooperationProject` (合作项目)、`showcaseItem` (风采展示) 进行模糊匹配，性能极佳。
+- **专属气泡标记与极佳交互**：各类别检索结果以高对比度的发光胶囊气泡（如 `📚 课程`、`📰 动态`、`🤝 合作`、`📸 风采`）展示，配备即时 Loading 指示器和优雅的交互动效，点击即可瞬间无刷新跳转到相应页面板块。
+
+### 11. 📊 首页与关于页数据指标可视化灵活定制 (Dynamic Data Statistics Configuration)
+- **完全摆脱 Hardcode**：将首页及关于我们页面原本硬编码 (Hardcoded) 的核心数据指标条 (Data Strip) 全部重构为动态读取。
+- **完美的可视化配置面板**：在后台「系统基本信息管理」(`/admin/config`) 中，深度集成了首页四大指标、关于页四大指标的数值（如 `500+`、`100%`）与文字标签（如 `培训学员`、`客户满意度`）的表单配置。
+- **即时热更新**：配合 React Server Components (RSC) 与 `force-dynamic` 动态渲染，后台保存修改后通过 `revalidatePath` 瞬间全网多端同步刷新，在提升管理便捷性的同时，对 SEO 极为友好。
+
 ---
 *Generated & maintained with ❤️ by Antigravity AI.*

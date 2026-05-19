@@ -69,8 +69,13 @@ export default async function Home() {
 
       {/* ===== DATA STRIP ===== */}
       <div className="data-strip">
-        {[['500+','培训学员'],['10+','维修课程'],['5年+','行业经验'],['100%','客户满意度']].map(([n,l]) => (
-          <div key={l}><div className="num">{n}</div><div className="label">{l}</div></div>
+        {[
+          [configs.home_stat1_num || '500+', configs.home_stat1_label || '培训学员'],
+          [configs.home_stat2_num || '10+', configs.home_stat2_label || '维修课程'],
+          [configs.home_stat3_num || '5年+', configs.home_stat3_label || '行业经验'],
+          [configs.home_stat4_num || '100%', configs.home_stat4_label || '客户满意度']
+        ].map(([n, l], index) => (
+          <div key={index}><div className="num">{n}</div><div className="label">{l}</div></div>
         ))}
       </div>
 

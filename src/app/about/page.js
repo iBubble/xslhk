@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import prisma from '../../lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: '关于星势力 - 云南星势力航空科技有限公司',
   description: '了解云南星势力航空科技有限公司的发展历程、企业使命与服务优势',
@@ -9,7 +11,7 @@ export const metadata = {
 import { getSystemConfigs } from '../../lib/config';
 
 export default async function About() {
-  await getSystemConfigs();
+  const configs = await getSystemConfigs();
   const contents = await prisma.aboutContent.findMany();
   const cm = {};
   contents.forEach(c => { cm[c.section] = c; });
@@ -44,8 +46,13 @@ export default async function About() {
       </section>
 
       <div className="data-strip">
-        {[['500+','培训学员'],['10+','专业课程'],['5年+','行业经验'],['50+','合作企业']].map(([n,l]) => (
-          <div key={l}><div className="num">{n}</div><div className="label">{l}</div></div>
+        {[
+          [configs.about_stat1_num || '500+', configs.about_stat1_label || '培训学员'],
+          [configs.about_stat2_num || '10+', configs.about_stat2_label || '专业课程'],
+          [configs.about_stat3_num || '5年+', configs.about_stat3_label || '行业经验'],
+          [configs.about_stat4_num || '50+', configs.about_stat4_label || '合作企业']
+        ].map(([n, l], index) => (
+          <div key={index}><div className="num">{n}</div><div className="label">{l}</div></div>
         ))}
       </div>
 
