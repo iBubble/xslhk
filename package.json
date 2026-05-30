@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "dev:watch": "nodemon --watch . --exec \"npm run dev\"",
-    "build": "next build",
-    "start": "next start"
+    "build": "NODE_OPTIONS='--max-old-space-size=1024' next build",
+    "start": "next start",
+    "wechat-sync": "NODE_OPTIONS='--max-old-space-size=1024' node scripts/wechat_sync.js"
   },
   "dependencies": {
     "@prisma/client": "^5.15.0",
