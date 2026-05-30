@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import prisma from '../../lib/prisma';
 import ShowcaseGallery from '../../components/ShowcaseGallery';
+import { getSystemConfigs } from '../../lib/config';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,20 +11,19 @@ export const metadata = {
 };
 
 export default async function ShowcasePage() {
+  const configs = await getSystemConfigs();
   const items = await prisma.showcaseItem.findMany({ orderBy: { id: 'desc' } });
 
   return (
     <>
-
-      <div className="page-hero" style={{ backgroundImage: 'url("/img_cases.png")' }}>
+      <div className="page-hero" style={{ backgroundImage: `url("${configs.banner_showcase || '/img_cases.png'}")` }}>
         <div className="page-hero-overlay" />
         <div className="container page-hero-content">
-          <div className="breadcrumb"><Link href="/">首页</Link><span>/</span><span>风采展示</span></div>
-          <h1>风采展示</h1>
-          <p>记录每一次飞翔，展示我们的专业与热情</p>
+          <div className="breadcrumb"><Link href="/">首页</Link><span>/</span><span>{configs.banner_showcase_title || '风采展示'}</span></div>
+          <h1>{configs.banner_showcase_title || '风采展示'}</h1>
+          <p>{configs.banner_showcase_desc || '记录每一次飞翔，展示我们的专业与热情'}</p>
         </div>
       </div>
-
       <section style={{ background: '#f8f9fa', padding: '70px 5vw', minHeight: '500px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div className="section-header">

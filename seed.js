@@ -27,7 +27,13 @@ async function main() {
   await prisma.caseModel.deleteMany();
   await prisma.contactRequest.deleteMany();
 
-  const passwordHash = await bcrypt.hash('Xslhk@2026', 10);
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminPassword) {
+    console.error('错误: 请通过环境变量 ADMIN_PASSWORD 设置管理员初始密码。');
+    console.error('示例: ADMIN_PASSWORD=您的强密码 node seed.js');
+    process.exit(1);
+  }
+  const passwordHash = await bcrypt.hash(adminPassword, 10);
   
   const user = await prisma.user.create({
     data: {

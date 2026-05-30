@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
+import { authOptions } from '../../auth/[...nextauth]/route';
 import prisma from '../../../../lib/prisma';
 import { revalidatePath } from 'next/cache';
 
 export async function POST(request) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   if (!session) {
     return NextResponse.json({ success: false, message: '未授权' }, { status: 401 });
   }
@@ -68,6 +69,7 @@ export async function POST(request) {
       updatedCount,
     });
   } catch (error) {
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    console.error('批量导入微信文章失败:', error);
+    return NextResponse.json({ success: false, message: '操作失败，服务端内部错误' }, { status: 500 });
   }
 }

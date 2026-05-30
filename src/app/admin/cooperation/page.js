@@ -1,11 +1,13 @@
 import prisma from '../../../lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { getServerSession } from "next-auth/next";
+import { authOptions } from '../../api/auth/[...nextauth]/route';
 import { redirect } from 'next/navigation';
 import RichEditor from '../../../components/RichEditor';
 import AdminBatchTable from '../../../components/AdminBatchTable';
+import ImageUploadInput from '../../../components/ImageUploadInput';
 export default async function AdminCooperation({ searchParams }) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   if (!session) redirect('/auth/signin');
 
   const params = searchParams instanceof Promise ? await searchParams : searchParams;
@@ -16,6 +18,8 @@ export default async function AdminCooperation({ searchParams }) {
 
   async function saveProject(formData) {
     'use server';
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error('未授权');
     const idVal = formData.get('id');
     const id = (idVal && !isNaN(parseInt(idVal))) ? parseInt(idVal) : null;
 
@@ -45,6 +49,8 @@ export default async function AdminCooperation({ searchParams }) {
 
   async function deleteProject(formData) {
     'use server';
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error('未授权');
     const idVal = formData.get('id');
     const id = (idVal && !isNaN(parseInt(idVal))) ? parseInt(idVal) : null;
     if (!id) return;
@@ -86,7 +92,7 @@ export default async function AdminCooperation({ searchParams }) {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
             <div style={{ gridColumn: 'span 2' }}>
               <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.83rem', color: '#64748b' }}>封面图片路径</label>
-              <input name="image" placeholder="/img_service.png" className="admin-input" defaultValue={editItem?.image || ''} />
+              <ImageUploadInput name="image" placeholder="/img_service.png" defaultValue={editItem?.image || ''} />
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.83rem', color: '#64748b' }}>排序</label>

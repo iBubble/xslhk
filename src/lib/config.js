@@ -14,8 +14,31 @@ const DEFAULT_CONFIGS = {
   wechat_mp_appsecret: '',
   wechat_mp_token: '',
   wechat_mp_aeskey: '',
-  wechat_mp_auto_sync: 'false',
-  
+  // 栏目 Banner 配置
+  banner_about: '/img_about.png',
+  banner_about_title: '关于星势力',
+  banner_about_desc: '深耕航空科技，引领低空经济新纪元',
+
+  banner_news: '/img_news.png',
+  banner_news_title: '公司动态',
+  banner_news_desc: '同步"云南星势力航空科技有限公司"公众号最新内容',
+
+  banner_courses: '/img_repair.png',
+  banner_courses_title: '无人机维修课程',
+  banner_courses_desc: '系统学习，实操为主，掌握无人机维修核心技能',
+
+  banner_showcase: '/img_cases.png',
+  banner_showcase_title: '风采展示',
+  banner_showcase_desc: '记录每一次飞翔，展示我们的专业与热情',
+
+  banner_cooperation: '/img_service.png',
+  banner_cooperation_title: '项目合作',
+  banner_cooperation_desc: '携手共赢，共同推动低空经济与无人机产业发展',
+
+  banner_contact: '/img_service.png',
+  banner_contact_title: '联系我们',
+  banner_contact_desc: '期待与您的每一次沟通，欢迎随时咨询',
+
   // 首页数据统计配置
   home_stat1_num: '500+',
   home_stat1_label: '培训学员',
@@ -35,6 +58,12 @@ const DEFAULT_CONFIGS = {
   about_stat3_label: '行业经验',
   about_stat4_num: '50+',
   about_stat4_label: '合作企业',
+
+  // 课程特色板块配置
+  course_intro_title: '为什么选择我们的课程？',
+  course_intro_desc: '星势力航空科技拥有专业的无人机维修培训基地，配备齐全的实训设备与真实机型，由具备丰富实战经验的技术工程师担任讲师。',
+  course_intro_points: '80%实操比例，真机拆装练习\n资深工程师全程授课指导\n小班制教学，一对一答疑\n结业颁发培训证书\n终身免费复训一次',
+  course_intro_image: '/img_repair.png',
 };
 
 async function ensureInitialized() {

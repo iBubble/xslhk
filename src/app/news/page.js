@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import prisma from '../../lib/prisma';
+import { getSystemConfigs } from '../../lib/config';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +13,7 @@ export default async function NewsPage(props) {
   const searchParams = await props.searchParams;
   const pageVal = searchParams?.page;
   const page = (pageVal && !isNaN(parseInt(pageVal))) ? parseInt(pageVal) : 1;
+  const configs = await getSystemConfigs();
 
   const pageSize = 10;
   const totalCount = await prisma.news.count();
@@ -62,13 +64,12 @@ export default async function NewsPage(props) {
           color: #0056b3;
         }
       `}</style>
-
-      <div className="page-hero" style={{ backgroundImage: 'url("/img_news.png")' }}>
+      <div className="page-hero" style={{ backgroundImage: `url("${configs.banner_news || '/img_news.png'}")` }}>
         <div className="page-hero-overlay" />
         <div className="container page-hero-content">
-          <div className="breadcrumb"><Link href="/">首页</Link><span>/</span><span>公司动态</span></div>
-          <h1>公司动态</h1>
-          <p>同步"云南星势力航空科技有限公司"公众号最新内容</p>
+          <div className="breadcrumb"><Link href="/">首页</Link><span>/</span><span>{configs.banner_news_title || '公司动态'}</span></div>
+          <h1>{configs.banner_news_title || '公司动态'}</h1>
+          <p>{configs.banner_news_desc || '同步"云南星势力航空科技有限公司"公众号最新内容'}</p>
         </div>
       </div>
 

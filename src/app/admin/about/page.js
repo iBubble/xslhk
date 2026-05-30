@@ -1,11 +1,13 @@
 import prisma from '../../../lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { getServerSession } from "next-auth/next";
+import { authOptions } from '../../api/auth/[...nextauth]/route';
 import { redirect } from 'next/navigation';
 import RichEditor from '../../../components/RichEditor';
 import { getSystemConfigs, setSystemConfig } from '../../../lib/config';
+import ImageUploadInput from '../../../components/ImageUploadInput';
 export default async function AdminAbout({ searchParams }) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   if (!session) redirect('/auth/signin');
 
   const contents = await prisma.aboutContent.findMany();
@@ -26,6 +28,8 @@ export default async function AdminAbout({ searchParams }) {
 
   async function upsertSection(formData) {
     'use server';
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error('未授权');
     const section = formData.get('section');
     const title = formData.get('title');
     const content = formData.get('content');
@@ -43,6 +47,8 @@ export default async function AdminAbout({ searchParams }) {
 
   async function updateQrCode(formData) {
     'use server';
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error('未授权');
     const qrCode = formData.get('contact_qrcode');
     if (qrCode !== null) {
       await setSystemConfig('contact_qrcode', qrCode);
@@ -95,7 +101,7 @@ export default async function AdminAbout({ searchParams }) {
               {sec.key === 'intro' && (
                 <div style={{ marginBottom: '1rem' }}>
                   <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.83rem', color: '#64748b' }}>配图路径（选填，仅简介模块使用）</label>
-                  <input name="image" defaultValue={cm[sec.key]?.image || ''} placeholder="/img_about.png" className="admin-input" />
+                  <ImageUploadInput name="image" defaultValue={cm[sec.key]?.image || ''} placeholder="/img_about.png" />
                 </div>
               )}
               {sec.key !== 'intro' && <input type="hidden" name="image" value="" />}
@@ -112,7 +118,7 @@ export default async function AdminAbout({ searchParams }) {
           <form action={updateQrCode}>
             <div style={{ marginBottom: '1rem' }}>
               <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.83rem', color: '#64748b' }}>二维码图片路径 *</label>
-              <input name="contact_qrcode" required defaultValue={configs.contact_qrcode || ''} placeholder="/images/fav.png" className="admin-input" />
+              <ImageUploadInput name="contact_qrcode" defaultValue={configs.contact_qrcode || ''} placeholder="/images/fav.png" />
               <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.5rem' }}>前台联系页面展示的二维码，请填入相对路径或完整 URL</p>
             </div>
             <button type="submit" className="btn-primary" style={{ padding: '0.5rem 1.2rem', fontSize: '0.85rem' }}>保存公众号二维码</button>

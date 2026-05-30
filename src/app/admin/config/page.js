@@ -1,11 +1,13 @@
 import prisma from '../../../lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { getServerSession } from "next-auth/next";
+import { authOptions } from '../../api/auth/[...nextauth]/route';
 import { redirect } from 'next/navigation';
 import { getSystemConfigs, setSystemConfig } from '../../../lib/config';
+import ImageUploadInput from '../../../components/ImageUploadInput';
 
 export default async function AdminConfig({ searchParams }) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   if (!session) redirect('/auth/signin');
 
   const configs = await getSystemConfigs();
@@ -15,6 +17,8 @@ export default async function AdminConfig({ searchParams }) {
 
   async function updateConfigs(formData) {
     'use server';
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error('未授权');
     
     const fields = [
       'company_name',
@@ -29,7 +33,6 @@ export default async function AdminConfig({ searchParams }) {
       'wechat_mp_appsecret',
       'wechat_mp_token',
       'wechat_mp_aeskey',
-      'wechat_mp_auto_sync',
       // 首页数据统计字段
       'home_stat1_num', 'home_stat1_label',
       'home_stat2_num', 'home_stat2_label',
@@ -40,6 +43,13 @@ export default async function AdminConfig({ searchParams }) {
       'about_stat2_num', 'about_stat2_label',
       'about_stat3_num', 'about_stat3_label',
       'about_stat4_num', 'about_stat4_label',
+      // 栏目 Banner 字段及其标题、描述
+      'banner_about', 'banner_about_title', 'banner_about_desc',
+      'banner_news', 'banner_news_title', 'banner_news_desc',
+      'banner_courses', 'banner_courses_title', 'banner_courses_desc',
+      'banner_showcase', 'banner_showcase_title', 'banner_showcase_desc',
+      'banner_cooperation', 'banner_cooperation_title', 'banner_cooperation_desc',
+      'banner_contact', 'banner_contact_title', 'banner_contact_desc',
     ];
 
     for (const field of fields) {
@@ -50,8 +60,12 @@ export default async function AdminConfig({ searchParams }) {
     }
 
     revalidatePath('/');
-    revalidatePath('/contact');
     revalidatePath('/about');
+    revalidatePath('/news');
+    revalidatePath('/courses');
+    revalidatePath('/showcase');
+    revalidatePath('/cooperation');
+    revalidatePath('/contact');
     revalidatePath('/admin/config');
     
     redirect('/admin/config?success=1');
@@ -91,7 +105,7 @@ export default async function AdminConfig({ searchParams }) {
 
           <div style={{ marginBottom: '1.5rem' }}>
             <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: '#94a3b8', fontWeight: 500 }}>公司 LOGO 图片路径</label>
-            <input name="logo_url" defaultValue={configs.logo_url} className="admin-input" required />
+            <ImageUploadInput name="logo_url" defaultValue={configs.logo_url} placeholder="/demo/logo.png" />
             <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.3rem' }}>彩色 LOGO 推荐使用默认：`/demo/logo.png`</p>
           </div>
 
@@ -117,9 +131,13 @@ export default async function AdminConfig({ searchParams }) {
           </div>
 
           <div style={{ marginBottom: '1.5rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: '#94a3b8', fontWeight: 500 }}>公众号二维码图片路径</label>
-            <input name="contact_qrcode" defaultValue={configs.contact_qrcode} className="admin-input" required />
-            <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.3rem' }}>可以上传并在此填写，如：`/images/fav.png`</p>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: '#94a3b8', fontWeight: 500 }}>
+              微信公众号二维码（展示于「联系我们」页面）
+            </label>
+            <ImageUploadInput name="contact_qrcode" defaultValue={configs.contact_qrcode} placeholder="/images/fav.png" />
+            <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.3rem' }}>
+              请在此上传您的微信公众号二维码图片。前台「联系我们」页面底部的扫码关注公众号区域将会自动且实时同步展示此二维码。
+            </p>
           </div>
 
           <div style={{ marginBottom: '2rem' }}>
@@ -294,17 +312,6 @@ export default async function AdminConfig({ searchParams }) {
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: '#94a3b8', fontWeight: 500 }}>消息加解密密钥 (AESKey)</label>
                 <input name="wechat_mp_aeskey" defaultValue={configs.wechat_mp_aeskey || ''} placeholder="43位 EncodingAESKey" className="admin-input" />
               </div>
-            </div>
-
-            <div>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', color: '#94a3b8', fontWeight: 500 }}>是否启用微信文章定期同步</label>
-              <select name="wechat_mp_auto_sync" defaultValue={configs.wechat_mp_auto_sync || 'false'} className="admin-input" style={{ width: '100%', cursor: 'pointer' }}>
-                <option value="false">关闭自动同步 (仅保留手动按需导入通道)</option>
-                <option value="true">开启全自动同步 (每 24 小时自动拉取并导入最新微信群发文章)</option>
-              </select>
-              <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.5rem', lineHeight: 1.5 }}>
-                💡 接口提示：本站已预置了微信群发事件监听（WeChat Event Webhook）底层协议结构，同步开启后，系统将在后台与微信服务器握手，并自动把匹配的图文信息无缝解析写入“公司动态”列表。
-              </p>
             </div>
           </div>
 

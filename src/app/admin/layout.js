@@ -8,9 +8,11 @@ export default function AdminLayout({ children }) {
   const navItems = [
     { name: '控制台大盘', path: '/admin', icon: '📊' },
     { name: '基本信息', path: '/admin/config', icon: '⚙️' },
+    { name: '栏目管理', path: '/admin/columns', icon: '📁' },
     { name: '首页轮播图', path: '/admin/hero', icon: '🎠' },
     { name: '公司动态', path: '/admin/news', icon: '📰' },
-    { name: '维修课程', path: '/admin/courses', icon: '🔧' },
+    { name: '维修课程列表', path: '/admin/courses', icon: '🔧' },
+    { name: '课程特色介绍', path: '/admin/courses/intro', icon: '✨', isSub: true },
     { name: '风采展示', path: '/admin/showcase', icon: '🖼️' },
     { name: '项目合作', path: '/admin/cooperation', icon: '🤝' },
     { name: '关于页内容', path: '/admin/about', icon: '🏢' },
@@ -44,23 +46,27 @@ export default function AdminLayout({ children }) {
         <nav style={{ flex: 1, padding: '1rem 0.75rem', overflowY: 'auto' }}>
           <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
             {navItems.map((item) => {
-              const isActive = pathname === item.path || (item.path !== '/admin' && pathname?.startsWith(item.path));
+              const isActive = pathname === item.path || (
+                item.path !== '/admin' && 
+                pathname?.startsWith(item.path) && 
+                !navItems.some(otherItem => otherItem.path !== item.path && otherItem.path.startsWith(item.path) && pathname.startsWith(otherItem.path))
+              );
               return (
                 <li key={item.path}>
                   <Link href={item.path} style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.8rem',
-                    padding: '0.7rem 0.9rem',
+                    padding: item.isSub ? '0.5rem 0.9rem 0.5rem 2.2rem' : '0.7rem 0.9rem',
                     borderRadius: '8px',
                     backgroundColor: isActive ? 'rgba(59,130,246,0.15)' : 'transparent',
-                    color: isActive ? '#60a5fa' : '#94a3b8',
+                    color: isActive ? '#60a5fa' : (item.isSub ? '#64748b' : '#94a3b8'),
                     fontWeight: isActive ? 500 : 400,
-                    fontSize: '0.88rem',
+                    fontSize: item.isSub ? '0.82rem' : '0.88rem',
                     transition: 'all 0.2s',
                     borderLeft: isActive ? '3px solid #3b82f6' : '3px solid transparent',
                   }}>
-                    <span style={{ fontSize: '1.1rem', width: '20px', textAlign: 'center' }}>{item.icon}</span>
+                    <span style={{ fontSize: item.isSub ? '0.95rem' : '1.1rem', width: '20px', textAlign: 'center' }}>{item.icon}</span>
                     {item.name}
                   </Link>
                 </li>
@@ -70,6 +76,9 @@ export default function AdminLayout({ children }) {
         </nav>
 
         <div style={{ padding: '1rem 0.75rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <Link href="/admin/password" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '0.7rem 0.9rem', color: '#94a3b8', fontSize: '0.85rem', borderRadius: '8px' }}>
+            <span>🔐</span> 修改密码
+          </Link>
           <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '0.7rem 0.9rem', color: '#94a3b8', fontSize: '0.85rem', borderRadius: '8px' }}>
             <span>🏠</span> 返回前台
           </Link>

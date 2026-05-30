@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import prisma from '../../lib/prisma';
+import DOMPurify from 'isomorphic-dompurify';
+import { getSystemConfigs } from '../../lib/config';
 
 export const metadata = {
   title: '项目合作 - 云南星势力航空科技有限公司',
@@ -9,6 +11,7 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function CooperationPage(props) {
+  const configs = await getSystemConfigs();
   const searchParams = await props.searchParams;
   const pageVal = searchParams?.page;
   const page = (pageVal && !isNaN(parseInt(pageVal))) ? parseInt(pageVal) : 1;
@@ -26,12 +29,12 @@ export default async function CooperationPage(props) {
 
   return (
     <>
-      <div className="page-hero" style={{ backgroundImage: 'url("/img_service.png")' }}>
+      <div className="page-hero" style={{ backgroundImage: `url("${configs.banner_cooperation || '/img_service.png'}")` }}>
         <div className="page-hero-overlay" />
         <div className="container page-hero-content">
-          <div className="breadcrumb"><Link href="/">首页</Link><span>/</span><span>项目合作</span></div>
-          <h1>项目合作</h1>
-          <p>携手共赢，共同推动低空经济与无人机产业发展</p>
+          <div className="breadcrumb"><Link href="/">首页</Link><span>/</span><span>{configs.banner_cooperation_title || '项目合作'}</span></div>
+          <h1>{configs.banner_cooperation_title || '项目合作'}</h1>
+          <p>{configs.banner_cooperation_desc || '携手共赢，共同推动低空经济与无人机产业发展'}</p>
         </div>
       </div>
 
@@ -91,7 +94,7 @@ export default async function CooperationPage(props) {
                     {project.content && (
                       <div 
                         style={{ color: '#555', lineHeight: 1.9, fontSize: '0.92rem', marginTop: '0.8rem' }}
-                        dangerouslySetInnerHTML={{ __html: project.content }}
+                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(project.content) }}
                       />
                     )}
                   </div>

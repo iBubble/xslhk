@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from 'react';
+import DOMPurify from 'isomorphic-dompurify';
 
 export default function RichEditor({ name, defaultValue = '', placeholder = '请输入正文内容...' }) {
   const editorRef = useRef(null);
@@ -9,6 +10,20 @@ export default function RichEditor({ name, defaultValue = '', placeholder = '请
   const [imagesInContent, setImagesInContent] = useState([]);
   const [selectedCover, setSelectedCover] = useState('');
 
+  // 自定义链接/图片插入弹窗状态
+  const [modalType, setModalType] = useState(null); // null | 'link' | 'image'
+  const [modalValue, setModalValue] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
+  const [editorError, setEditorError] = useState('');
+
+  // 错误提示自动消失
+  useEffect(() => {
+    if (editorError) {
+      const timer = setTimeout(() => setEditorError(''), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [editorError]);
+
   // 1. 仅在挂载时将 mounted 设为 true
   useEffect(() => {
     setMounted(true);
@@ -17,8 +32,10 @@ export default function RichEditor({ name, defaultValue = '', placeholder = '请
   // 2. 在 mounted 变为 true，或者 defaultValue 改变，且真实的编辑器 DOM 已经存在时，初始化内容
   useEffect(() => {
     if (mounted && editorRef.current) {
-      editorRef.current.innerHTML = defaultValue;
-      setHtml(defaultValue);
+      // 安全过滤初始化值
+      const cleanHtml = DOMPurify.sanitize(defaultValue);
+      editorRef.current.innerHTML = cleanHtml;
+      setHtml(cleanHtml);
     }
   }, [mounted, defaultValue]);
 
@@ -73,10 +90,11 @@ export default function RichEditor({ name, defaultValue = '', placeholder = '请
       setSelectedCover(src);
     }
   };
-
   const handleInput = () => {
     if (editorRef.current) {
-      setHtml(editorRef.current.innerHTML);
+      // 实时获取编辑器内容并做基本的 sanitize 过滤后更新组件状态
+      const rawHtml = editorRef.current.innerHTML;
+      setHtml(rawHtml);
     }
   };
 
@@ -88,47 +106,115 @@ export default function RichEditor({ name, defaultValue = '', placeholder = '请
   };
 
   const insertLink = () => {
-    const url = prompt('请输入链接地址 (如 https://example.com):');
-    if (url) {
-      executeCommand('createLink', url);
-    }
+    setModalType('link');
+    setModalValue('');
   };
 
   const insertImageByUrl = () => {
-    const url = prompt('请输入图片网络地址 (URL):');
-    if (url) {
-      executeCommand('insertImage', url);
-      // Give inserted images responsive styling
-      setTimeout(() => {
-        if (editorRef.current) {
-          const imgs = editorRef.current.querySelectorAll('img');
-          imgs.forEach(img => {
-            img.style.maxWidth = '100%';
-            img.style.height = 'auto';
-            img.style.borderRadius = '8px';
-            img.style.margin = '10px 0';
-          });
+    setModalType('image');
+    setModalValue('');
+  };
+
+  const insertHTMLAtCursor = (htmlString) => {
+    if (typeof document === 'undefined') return;
+    
+    if (editorRef.current) {
+      editorRef.current.focus();
+    }
+    
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      
+      if (editorRef.current && editorRef.current.contains(range.commonAncestorContainer)) {
+        try {
+          document.execCommand('insertHTML', false, htmlString);
           handleInput();
+          return;
+        } catch (e) {
+          console.error("execCommand failed:", e);
         }
-      }, 50);
+        
+        range.deleteContents();
+        const el = document.createElement("div");
+        el.innerHTML = htmlString;
+        const frag = document.createDocumentFragment();
+        let node;
+        let lastNode;
+        while ((node = el.firstChild)) {
+          lastNode = frag.appendChild(node);
+        }
+        range.insertNode(frag);
+        
+        if (lastNode) {
+          const newRange = range.cloneRange();
+          newRange.setStartAfter(lastNode);
+          newRange.collapse(true);
+          selection.removeAllRanges();
+          selection.addRange(newRange);
+        }
+        handleInput();
+        return;
+      }
+    }
+    
+    if (editorRef.current) {
+      const el = document.createElement("div");
+      el.innerHTML = htmlString;
+      while (el.firstChild) {
+        editorRef.current.appendChild(el.firstChild);
+      }
+      handleInput();
     }
   };
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const base64 = event.target.result;
-        // Insert base64 image tag directly
-        executeCommand('insertHTML', `<img src="${base64}" style="max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0;" alt="uploaded image" />`);
-        // Reset file input
-        if (fileInputRef.current) fileInputRef.current.value = '';
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    // 前端基础校验
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    const ext = file.name.split('.').pop()?.toLowerCase();
+    if (!allowedExtensions.includes(ext)) {
+      setEditorError('仅支持上传 JPG, PNG, GIF, WEBP 格式的图片');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
+    const MAX_SIZE = 5 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      setEditorError('文件过大，单张图片不能超过 5MB');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
+    setIsUploading(true);
+    setEditorError('');
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || '文件上传失败');
+      }
+
+      // 安全插入 HTML 指向上传后的服务器图片路径
+      insertHTMLAtCursor(`<img src="${data.url}" style="max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0;" alt="uploaded image" />`);
+    } catch (err) {
+      console.error('上传本地图片失败:', err);
+      setEditorError(err.message || '网络错误，文件上传失败');
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
-
   if (!mounted) {
     return (
       <div style={{ background: '#0e1017', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '8px', minHeight: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', fontSize: '0.85rem' }}>
@@ -146,7 +232,148 @@ export default function RichEditor({ name, defaultValue = '', placeholder = '请
       display: 'flex',
       flexDirection: 'column',
       fontFamily: 'inherit',
+      position: 'relative',
     }}>
+      {/* 错误提示浮层 */}
+      {editorError && (
+        <div style={{
+          position: 'absolute',
+          top: '12px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'rgba(239, 68, 68, 0.95)',
+          color: '#fff',
+          padding: '0.6rem 1.2rem',
+          borderRadius: '6px',
+          fontSize: '0.82rem',
+          fontWeight: 500,
+          zIndex: 1000,
+          boxShadow: '0 10px 25px rgba(239, 68, 68, 0.3)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          backdropFilter: 'blur(4px)',
+          border: '1px solid rgba(255,255,255,0.1)',
+        }}>
+          <span>⚠️ {editorError}</span>
+          <button
+            type="button"
+            onClick={() => setEditorError('')}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#fff',
+              cursor: 'pointer',
+              fontSize: '0.85rem',
+              padding: '0 4px',
+              opacity: 0.8,
+              lineHeight: 1,
+            }}
+            onMouseOver={e => e.currentTarget.style.opacity = 1}
+            onMouseOut={e => e.currentTarget.style.opacity = 0.8}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+      {/* 嵌入式超链接/图片插入弹窗 (替换不安全且体验差的 prompt) */}
+      {modalType && (
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'rgba(10, 11, 16, 0.88)',
+          backdropFilter: 'blur(6px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 100,
+          padding: '1rem',
+        }}>
+          <div style={{
+            background: '#0d0f16',
+            border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: '12px',
+            padding: '1.5rem',
+            width: '100%',
+            maxWidth: '360px',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+          }}>
+            <h4 style={{ margin: '0 0 1rem', color: '#f8fafc', fontSize: '0.95rem', fontWeight: 600 }}>
+              {modalType === 'link' ? '🔗 插入超链接' : '🌐🖼️ 插入网络图片链接'}
+            </h4>
+            <input
+              type="text"
+              value={modalValue}
+              onChange={e => setModalValue(e.target.value)}
+              placeholder={modalType === 'link' ? '请输入链接 URL，如 https://example.com' : '请输入图片 URL，如 https://example.com/pic.jpg'}
+              style={{
+                width: '100%',
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '6px',
+                padding: '0.6rem 0.8rem',
+                color: '#f8fafc',
+                fontSize: '0.88rem',
+                outline: 'none',
+                marginBottom: '1.2rem',
+              }}
+              autoFocus
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  document.getElementById('editor-modal-confirm-btn')?.click();
+                } else if (e.key === 'Escape') {
+                  setModalType(null);
+                }
+              }}
+            />
+            <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={() => { setModalType(null); setModalValue(''); }}
+                style={{
+                  background: 'transparent',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: '#94a3b8',
+                  borderRadius: '6px',
+                  padding: '0.4rem 1rem',
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                }}
+              >
+                取消
+              </button>
+              <button
+                id="editor-modal-confirm-btn"
+                type="button"
+                onClick={() => {
+                  if (modalValue.trim()) {
+                    if (modalType === 'link') {
+                      executeCommand('createLink', modalValue.trim());
+                    } else {
+                      insertHTMLAtCursor(`<img src="${modalValue.trim()}" style="max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0;" alt="network image" />`);
+                    }
+                  }
+                  setModalType(null);
+                  setModalValue('');
+                }}
+                style={{
+                  background: '#3b82f6',
+                  border: 'none',
+                  color: '#fff',
+                  borderRadius: '6px',
+                  padding: '0.4rem 1rem',
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                }}
+              >
+                确认
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Hidden input to pass data in forms */}
       <input type="hidden" name={name} value={html} />
 
@@ -357,19 +584,19 @@ export default function RichEditor({ name, defaultValue = '', placeholder = '请
         >
           🌐🖼️
         </button>
-
         <button
           type="button"
           title="上传本地图片"
           onClick={() => fileInputRef.current?.click()}
+          disabled={isUploading}
           style={{
-            background: 'rgba(59,130,246,0.15)',
-            border: '1px solid rgba(59,130,246,0.3)',
+            background: isUploading ? 'rgba(255,255,255,0.05)' : 'rgba(59,130,246,0.15)',
+            border: isUploading ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(59,130,246,0.3)',
             borderRadius: '4px',
-            color: '#60a5fa',
+            color: isUploading ? '#94a3b8' : '#60a5fa',
             padding: '0 8px',
             height: '28px',
-            cursor: 'pointer',
+            cursor: isUploading ? 'not-allowed' : 'pointer',
             fontSize: '0.78rem',
             display: 'flex',
             alignItems: 'center',
@@ -377,10 +604,10 @@ export default function RichEditor({ name, defaultValue = '', placeholder = '请
             gap: '3px',
             transition: 'background 0.2s',
           }}
-          onMouseOver={e => e.currentTarget.style.background = 'rgba(59,130,246,0.25)'}
-          onMouseOut={e => e.currentTarget.style.background = 'rgba(59,130,246,0.15)'}
+          onMouseOver={e => !isUploading && (e.currentTarget.style.background = 'rgba(59,130,246,0.25)')}
+          onMouseOut={e => !isUploading && (e.currentTarget.style.background = 'rgba(59,130,246,0.15)')}
         >
-          📤 本地图片
+          {isUploading ? '⌛ 上传中...' : '📤 本地图片'}
         </button>
       </div>
 

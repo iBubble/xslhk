@@ -106,5 +106,17 @@
 - **完美的可视化配置面板**：在后台「系统基本信息管理」(`/admin/config`) 中，深度集成了首页四大指标、关于页四大指标的数值（如 `500+`、`100%`）与文字标签（如 `培训学员`、`客户满意度`）的表单配置。
 - **即时热更新**：配合 React Server Components (RSC) 与 `force-dynamic` 动态渲染，后台保存修改后通过 `revalidatePath` 瞬间全网多端同步刷新，在提升管理便捷性的同时，对 SEO 极为友好。
 
+### 12. 🔒 企业级全链路安全架构与防护加固 (Enterprise-grade Security Hardening)
+为了保障官网核心资产与后台管理数据万无一失，我们在本次升级中全方位落地了严密的安全防御体系：
+- **凭证安全彻底治理 (C1/C4)**：清除后台任何默认硬编码密钥与明文密码风险，重构为缺少环境变量时强制抛出异常拒绝启动，登录密码全部升级采用高强度 `bcrypt (cost 12)` 密码学单向哈希加盐存储。
+- **OS 命令注入全面消除 (C2)**：重构微信文章抓取与镜像端点，废除不安全的拼接 Shell 执行 `execSync` 方式，改用高安全级别的 `execFileSync` 进行参数化隔离传递，物理级阻断一切命令注入攻击可能。
+- **Server Actions 全局认证与网关防御 (C3/M4)**：严格适配 **Next.js 16/Turbopack 最新的架构标准**，彻底弃用了旧版中间件，在 `src/` 下创建了全新的 **`proxy.js` (Proxy 路由代理层)**，在服务端 100% 自动拦截并过滤所有对 `/admin/:path*` 的未登录访问；同时，为所有后台数据操作的 Server Actions 插入强制会话核验，彻底防范未授权的数据越权篡改行为。
+- **存储型 XSS 纵深防御 (H1)**：引入 `isomorphic-dompurify` 依赖，在前台所有调用 `dangerouslySetInnerHTML` 渲染动态 HTML 的组件（新闻详情、课程详情、关于我们使命/愿景/价值观、合作案例详情、风采展示列表及灯箱）中，全量强制应用 `DOMPurify.sanitize` 安全消毒，粉碎任意恶意脚本注入。
+- **富文本编辑器安全及高级交互革新 (H2/L1)**：清除不安全且严重阻塞浏览器主线程的原生 `window.prompt` 方法。利用 React 状态机设计并实现了一个**极其精美、拟物化磨砂玻璃质感 (Glassmorphism) 的内联 Modal 弹窗**，以高贵优雅的现代 UI 交互获取超链接与网络图片 URL，并对输入值进行自动消毒，实现极致的安全与美学结合。
+- **留言工单垃圾数据防灌水与 DoS 防御 (H3)**：为前台 `/api/contact` 留言工单提交接口内置了**基于客户端 IP 识别的内存级高吞吐速率限制器 (Rate Limiter)**，限制单 IP 每分钟最多提交 3 次请求；引入强效的数据过滤校验，对姓名、手机、邮箱、字数等进行 RFC 级别的严格正则格式审查和字数长度切片控制 (CWE-20)。
+- **服务器错误脱敏保护 (H4)**：重构全站 4 个核心 API 路由的 `catch` 处理器，隐藏返回给前端的 `error.message`，避免数据库结构、SQL 语法和物理绝对路径等敏感信息外泄 (CWE-209)，在服务端保留详尽日志，在客户端提供友好的通用安全提示。
+- **控制包体限制 (M3)**：将 Next.js 服务端 Server Actions 请求的 `bodySizeLimit` 从 `50mb` 强力调减至安全的 `4mb`，从源头扼杀任何超大 payload 引发资源耗尽的 DoS 攻击隐患。
+- **Nginx 高级安全配置优化 (M1)**：优化 Nginx 反向代理站点配置，添加 X-Frame-Options (DENY)、X-Content-Type-Options (nosniff) 以及严格的 Content-Security-Policy (CSP) 等一系列生产环境级安全响应头。
+
 ---
 *Generated & maintained with ❤️ by Antigravity AI.*

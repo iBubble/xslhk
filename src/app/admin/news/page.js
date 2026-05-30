@@ -1,13 +1,15 @@
 import prisma from '../../../lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { getServerSession } from "next-auth/next";
+import { authOptions } from '../../api/auth/[...nextauth]/route';
 import { redirect } from 'next/navigation';
 import RichEditor from '../../../components/RichEditor';
 import WeChatSyncButton from '../../../components/WeChatSyncButton';
 import AdminBatchTable from '../../../components/AdminBatchTable';
+import ImageUploadInput from '../../../components/ImageUploadInput';
 
 export default async function AdminNews({ searchParams }) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   if (!session) redirect('/auth/signin');
 
   const params = searchParams instanceof Promise ? await searchParams : searchParams;
@@ -18,6 +20,8 @@ export default async function AdminNews({ searchParams }) {
 
   async function deleteNews(formData) {
     'use server';
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error('未授权');
     const idVal = formData.get('id');
     const id = (idVal && !isNaN(parseInt(idVal))) ? parseInt(idVal) : null;
     if (!id) return;
@@ -29,6 +33,8 @@ export default async function AdminNews({ searchParams }) {
 
   async function saveNews(formData) {
     'use server';
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error('未授权');
     const idVal = formData.get('id');
     const id = (idVal && !isNaN(parseInt(idVal))) ? parseInt(idVal) : null;
 
@@ -93,7 +99,7 @@ export default async function AdminNews({ searchParams }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
             <div>
               <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.83rem', color: '#64748b' }}>封面图片路径</label>
-              <input name="image" placeholder="/img_news.png" className="admin-input" defaultValue={editItem?.image || ''} />
+              <ImageUploadInput name="image" placeholder="/img_news.png" defaultValue={editItem?.image || ''} />
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.83rem', color: '#64748b' }}>公众号原文链接</label>

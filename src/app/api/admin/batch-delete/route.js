@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
+import { authOptions } from '../../auth/[...nextauth]/route';
 import prisma from '../../../../lib/prisma';
 import { revalidatePath } from 'next/cache';
 
@@ -13,7 +14,7 @@ const MODEL_PATHS = {
 };
 
 export async function POST(request) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ success: false, message: '未授权' }, { status: 401 });
 
   try {
@@ -34,6 +35,7 @@ export async function POST(request) {
 
     return NextResponse.json({ success: true, deleted: intIds.length });
   } catch (error) {
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    console.error('批量删除操作失败:', error);
+    return NextResponse.json({ success: false, message: '操作失败，服务端内部错误' }, { status: 500 });
   }
 }

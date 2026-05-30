@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false, // Disable X-Powered-By header for security and small byte savings
   experimental: {
     serverActions: {
-      bodySizeLimit: "50mb",
+      bodySizeLimit: "4mb",
     },
   },
 };

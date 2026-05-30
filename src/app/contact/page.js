@@ -19,7 +19,7 @@ export default async function ContactPage() {
 
   return (
     <>
-      <div className="page-hero" style={{ backgroundImage: 'url("/img_service.png")' }}>
+      <div className="page-hero" style={{ backgroundImage: `url("${configs.banner_contact || '/img_service.png'}")` }}>
         <div className="page-hero-overlay" />
         <div className="container page-hero-content">
           <div className="breadcrumb"><Link href="/">首页</Link><span>/</span><span>联系我们</span></div>

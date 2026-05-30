@@ -1,16 +1,19 @@
 import prisma from '../../../lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { getServerSession } from "next-auth/next";
+import { authOptions } from '../../api/auth/[...nextauth]/route';
 import { redirect } from 'next/navigation';
 
 export default async function AdminContacts() {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   if (!session) redirect('/auth/signin');
 
   const contacts = await prisma.contactRequest.findMany({ orderBy: { createdAt: 'desc' } });
 
   async function updateStatus(formData) {
     'use server';
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error('未授权');
     const id = parseInt(formData.get('id'));
     const status = formData.get('status');
     await prisma.contactRequest.update({ where: { id }, data: { status } });
@@ -19,6 +22,8 @@ export default async function AdminContacts() {
 
   async function deleteContact(formData) {
     'use server';
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error('未授权');
     const id = parseInt(formData.get('id'));
     await prisma.contactRequest.delete({ where: { id } });
     revalidatePath('/admin/contacts');

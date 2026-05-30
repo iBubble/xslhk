@@ -1,10 +1,13 @@
 import { getServerSession } from "next-auth/next";
+import { authOptions } from '../api/auth/[...nextauth]/route';
 import { redirect } from 'next/navigation';
 import prisma from '../../lib/prisma';
 import Link from 'next/link';
+import fs from 'fs';
+import crypto from 'crypto';
 
 export default async function AdminDashboard() {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   if (!session) redirect('/auth/signin');
 
   const [newsCount, courseCount, showcaseCount, cooperationCount, pendingContacts] = await Promise.all([
@@ -25,11 +28,58 @@ export default async function AdminDashboard() {
     { label: '待处理工单', value: pendingContacts, color: '#ef4444', icon: '📞', link: '/admin/contacts' },
   ];
 
+  // 实时读取 SSL 证书状态 (CWE-22 Protected path)
+  let certStatus = { status: 'UNKNOWN', message: '未找到 Let\'s Encrypt 证书', validTo: '', daysLeft: 0 };
+  try {
+    const certPath = '/etc/letsencrypt/live/www.ynxslhk.com/fullchain.pem';
+    if (fs.existsSync(certPath)) {
+      const certPem = fs.readFileSync(certPath, 'utf8');
+      const cert = new crypto.X509Certificate(certPem);
+      const validTo = new Date(cert.validTo);
+      const now = new Date();
+      const msDiff = validTo.getTime() - now.getTime();
+      const daysLeft = Math.ceil(msDiff / (1000 * 60 * 60 * 24));
+      
+      certStatus = {
+        status: daysLeft <= 0 ? 'EXPIRED' : daysLeft < 15 ? 'WARNING' : 'OK',
+        message: daysLeft <= 0 ? '已过期' : daysLeft < 15 ? `即将到期 (剩 ${daysLeft} 天)` : `正常运行 (剩 ${daysLeft} 天)`,
+        validTo: validTo.toLocaleDateString('zh-CN'),
+        daysLeft
+      };
+    }
+  } catch (e) {
+    certStatus = { status: 'ERROR', message: `解析失败: ${e.message}`, validTo: '未知', daysLeft: 0 };
+  }
+
   return (
     <div>
-      <div style={{ marginBottom: '2.5rem' }}>
-        <h1 style={{ fontSize: '1.8rem', fontWeight: 600, color: '#f8fafc', marginBottom: '0.3rem' }}>控制台大盘</h1>
-        <p style={{ color: '#64748b', fontSize: '0.88rem' }}>欢迎回来，管理员</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '2.5rem' }}>
+        <div>
+          <h1 style={{ fontSize: '1.8rem', fontWeight: 600, color: '#f8fafc', marginBottom: '0.3rem' }}>控制台大盘</h1>
+          <p style={{ color: '#64748b', fontSize: '0.88rem', margin: 0 }}>欢迎回来，管理员</p>
+        </div>
+        {/* SSL 证书状态徽章 */}
+        <div style={{
+          background: certStatus.status === 'OK' ? 'rgba(16,185,129,0.1)' : certStatus.status === 'WARNING' ? 'rgba(245,158,11,0.1)' : 'rgba(239,68,68,0.1)',
+          border: certStatus.status === 'OK' ? '1px solid rgba(16,185,129,0.15)' : certStatus.status === 'WARNING' ? '1px solid rgba(245,158,11,0.15)' : '1px solid rgba(239,68,68,0.15)',
+          color: certStatus.status === 'OK' ? '#34d399' : certStatus.status === 'WARNING' ? '#fcd34d' : '#f87171',
+          borderRadius: '8px',
+          padding: '0.5rem 1rem',
+          fontSize: '0.82rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+        }}>
+          <span style={{ fontSize: '1rem' }}>🔒</span>
+          <div>
+            <span style={{ fontWeight: 600 }}>SSL 证书状态: </span>
+            <span style={{ marginRight: '0.6rem' }}>{certStatus.message}</span>
+            {certStatus.validTo && (
+              <span style={{ color: '#64748b', fontSize: '0.75rem' }}>过期时间: {certStatus.validTo}</span>
+            )}
+          </div>
+        </div>
       </div>
 
       <style>{`

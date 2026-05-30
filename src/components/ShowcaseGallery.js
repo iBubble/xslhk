@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
+import DOMPurify from 'isomorphic-dompurify';
 
 export default function ShowcaseGallery({ items = [] }) {
   const [selectedCat, setSelectedCat] = useState('全部');
@@ -215,7 +216,7 @@ export default function ShowcaseGallery({ items = [] }) {
                       WebkitBoxOrient: 'vertical',
                       WebkitLineClamp: 3,
                     }}
-                    dangerouslySetInnerHTML={{ __html: item.content }}
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.content) }}
                   />
                 ) : (
                   <p style={{ fontSize: '0.86rem', color: '#9ca3af', fontStyle: 'italic' }}>暂无详细描述</p>
@@ -394,7 +395,7 @@ export default function ShowcaseGallery({ items = [] }) {
                     overflowY: 'auto',
                     padding: '0 10px',
                   }}
-                  dangerouslySetInnerHTML={{ __html: currentItem.content }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(currentItem.content) }}
                 />
               )}
               <div style={{ fontSize: '0.75rem', color: '#4b5563', marginTop: '0.8rem' }}>

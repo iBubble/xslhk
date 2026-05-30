@@ -1,10 +1,12 @@
 import prisma from '../../../lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { getServerSession } from "next-auth/next";
+import { authOptions } from '../../api/auth/[...nextauth]/route';
 import { redirect } from 'next/navigation';
+import ImageUploadInput from '../../../components/ImageUploadInput';
 
 export default async function AdminHeroSlides({ searchParams }) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   if (!session) redirect('/auth/signin');
 
   const params = searchParams instanceof Promise ? await searchParams : searchParams;
@@ -22,6 +24,8 @@ export default async function AdminHeroSlides({ searchParams }) {
 
   async function saveItem(formData) {
     'use server';
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error('未授权');
     const idVal = formData.get('id');
     const id = (idVal && !isNaN(parseInt(idVal))) ? parseInt(idVal) : null;
 
@@ -53,6 +57,8 @@ export default async function AdminHeroSlides({ searchParams }) {
 
   async function deleteItem(formData) {
     'use server';
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error('未授权');
     const idVal = formData.get('id');
     const id = (idVal && !isNaN(parseInt(idVal))) ? parseInt(idVal) : null;
     if (!id) return;
@@ -112,8 +118,8 @@ export default async function AdminHeroSlides({ searchParams }) {
           </div>
 
           <div style={{ marginBottom: '1.2rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.83rem', color: '#64748b' }}>广告大图路径 * (Unsplash URL 或本地 /images/... 路径)</label>
-            <input name="image" required placeholder="https://images.unsplash.com/photo-xxx" className="admin-input" defaultValue={editItem?.image || ''} />
+            <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.83rem', color: '#64748b' }}>广告大图 *</label>
+            <ImageUploadInput name="image" defaultValue={editItem?.image || ''} required={true} placeholder="/img_repair.png" />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.2rem', marginBottom: '1.5rem' }}>

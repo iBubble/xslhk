@@ -3,7 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import prisma from '../../../../lib/prisma';
 import bcrypt from 'bcryptjs';
 
-const authOptions = {
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -35,7 +35,13 @@ const authOptions = {
       return token;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET || 'fallback_secret_for_dev_mode',
+  secret: (() => {
+    const secret = process.env.NEXTAUTH_SECRET;
+    if (!secret) {
+      throw new Error('FATAL: 环境变量 NEXTAUTH_SECRET 未设置，拒绝启动。请配置后重启。');
+    }
+    return secret;
+  })(),
   pages: { signIn: '/auth/signin' },
   session: { strategy: 'jwt' },
 };

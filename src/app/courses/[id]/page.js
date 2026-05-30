@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import prisma from '../../../lib/prisma';
+import DOMPurify from 'isomorphic-dompurify';
 
 const defaultCourses = {
   'a': { id: 'a', title: '多旋翼无人机维修基础', category: '基础课程', description: '掌握多旋翼无人机的基本结构原理，学习电机、电调、电池、飞控等核心部件的常见故障诊断与维修技能。', content: '<p>掌握多旋翼无人机的基本结构原理，学习电机、电调、电池、飞控等核心部件的常见故障诊断与维修技能。本课程以实操为主，包含真机拆装、电路排查以及常见故障件替换。</p><p>本课程专为零基础学员或无人机爱好者设计，通过对主流多旋翼无人机（如植保无人机、行业巡检无人机）的全面拆解与组装，帮助学员熟练掌握电子调速器（ESC）、无刷电机、动力电池安全与电池管理器、以及飞行控制系统的核心接线与排故技术。</p>', duration: '3天', price: '面议', image: '/card_repair.png' },
@@ -75,7 +76,7 @@ export default async function CourseDetail({ params }) {
 
             <div style={{ borderTop: '1px solid #eee', paddingTop: '1.5rem', color: '#555', lineHeight: 1.9, fontSize: '0.97rem' }}>
               {item.content ? (
-                <div dangerouslySetInnerHTML={{ __html: item.content }} className="rich-content" />
+                <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.content) }} className="rich-content" />
               ) : (
                 <div style={{ whiteSpace: 'pre-wrap' }}>{item.description}</div>
               )}

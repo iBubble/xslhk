@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import prisma from '../../lib/prisma';
+import DOMPurify from 'isomorphic-dompurify';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,15 +16,14 @@ export default async function About() {
   const contents = await prisma.aboutContent.findMany();
   const cm = {};
   contents.forEach(c => { cm[c.section] = c; });
-
   return (
     <>
-      <div className="page-hero" style={{ backgroundImage: 'url("/img_about.png")' }}>
+      <div className="page-hero" style={{ backgroundImage: `url("${configs.banner_about || '/img_about.png'}")` }}>
         <div className="page-hero-overlay" />
         <div className="container page-hero-content">
-          <div className="breadcrumb"><Link href="/">首页</Link><span>/</span><span>关于星势力</span></div>
-          <h1>关于星势力</h1>
-          <p>深耕航空科技，引领低空经济新纪元</p>
+          <div className="breadcrumb"><Link href="/">首页</Link><span>/</span><span>{configs.banner_about_title || '关于星势力'}</span></div>
+          <h1>{configs.banner_about_title || '关于星势力'}</h1>
+          <p>{configs.banner_about_desc || '深耕航空科技，引领低空经济新纪元'}</p>
         </div>
       </div>
 
@@ -34,7 +34,7 @@ export default async function About() {
             <h2 style={{ fontSize: '1.9rem', color: '#222', marginBottom: '1.5rem' }}>{cm['intro']?.title || '公司简介'}</h2>
             <div 
               style={{ color: '#555', lineHeight: 1.9, marginBottom: '1rem' }}
-              dangerouslySetInnerHTML={{ __html: cm['intro']?.content || '云南星势力航空科技有限公司，位于云南省昆明市盘龙区，是一家专注于无人机专业培训、技术维修及行业应用解决方案的科技企业。公司拥有经验丰富的技术研发与培训团队，承接各类多旋翼、固定翼、复合翼无人机的维修、改装与飞控调参业务，同时开展无人机维修技术培训课程，助力更多从业者掌握核心技术。我们与云南省多所高校、职业院校及行业单位建立了深度合作关系，致力于推动低空经济人才培养与产业生态建设。' }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(cm['intro']?.content || '云南星势力航空科技有限公司，位于云南省昆明市盘龙区，是一家专注于无人机专业培训、技术维修及行业应用解决方案的科技企业。公司拥有经验丰富的技术研发与培训团队，承接各类多旋翼、固定翼、复合翼无人机的维修、改装与飞控调参业务，同时开展无人机维修技术培训课程，助力更多从业者掌握核心技术。我们与云南省多所高校、职业院校及行业单位建立了深度合作关系，致力于推动低空经济人才培养与产业生态建设。') }}
             />
             <Link href="/contact" className="btn-primary" style={{ marginTop: '1rem', display: 'inline-block' }}>联系我们</Link>
           </div>
@@ -74,7 +74,7 @@ export default async function About() {
                 <h3 style={{ color: '#222', marginBottom: '1rem' }}>{item.title}</h3>
                 <div 
                   style={{ color: '#666', fontSize: '0.95rem', lineHeight: 1.8 }}
-                  dangerouslySetInnerHTML={{ __html: cm[item.key]?.content || item.def }}
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(cm[item.key]?.content || item.def) }}
                 />
               </div>
             ))}

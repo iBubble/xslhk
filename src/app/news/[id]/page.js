@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import prisma from '../../../lib/prisma';
+import DOMPurify from 'isomorphic-dompurify';
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
@@ -37,7 +38,7 @@ export default async function NewsDetail({ params }) {
             <h1 style={{ fontSize: '1.7rem', color: '#222', margin: '1rem 0 1.5rem', lineHeight: 1.4, fontWeight: 700 }}>{item.title}</h1>
             <div style={{ borderTop: '1px solid #eee', paddingTop: '1.5rem', color: '#555', lineHeight: 1.9, fontSize: '0.97rem' }}>
               {item.content ? (
-                <div dangerouslySetInnerHTML={{ __html: item.content }} className="rich-content" />
+                <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.content) }} className="rich-content" />
               ) : (
                 <div style={{ whiteSpace: 'pre-wrap' }}>{item.excerpt}</div>
               )}

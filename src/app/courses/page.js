@@ -9,9 +9,8 @@ export const metadata = {
 import { getSystemConfigs } from '../../lib/config';
 
 export const dynamic = 'force-dynamic';
-
 export default async function CoursesPage(props) {
-  await getSystemConfigs();
+  const configs = await getSystemConfigs();
   const searchParams = await props.searchParams;
   const pageVal = searchParams?.page;
   const page = (pageVal && !isNaN(parseInt(pageVal))) ? parseInt(pageVal) : 1;
@@ -48,12 +47,12 @@ export default async function CoursesPage(props) {
           color: #0056b3;
         }
       `}</style>
-      <div className="page-hero" style={{ backgroundImage: 'url("/img_repair.png")' }}>
+      <div className="page-hero" style={{ backgroundImage: `url("${configs.banner_courses || '/img_repair.png'}")` }}>
         <div className="page-hero-overlay" />
         <div className="container page-hero-content">
-          <div className="breadcrumb"><Link href="/">首页</Link><span>/</span><span>无人机维修课程</span></div>
-          <h1>无人机维修课程</h1>
-          <p>系统学习，实操为主，掌握无人机维修核心技能</p>
+          <div className="breadcrumb"><Link href="/">首页</Link><span>/</span><span>{configs.banner_courses_title || '无人机维修课程'}</span></div>
+          <h1>{configs.banner_courses_title || '无人机维修课程'}</h1>
+          <p>{configs.banner_courses_desc || '系统学习，实操为主，掌握无人机维修核心技能'}</p>
         </div>
       </div>
 
@@ -62,21 +61,31 @@ export default async function CoursesPage(props) {
         <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'flex', gap: '4rem', alignItems: 'center', flexWrap: 'wrap' }}>
           <div style={{ flex: '1 1 420px' }}>
             <div style={{ width: '40px', height: '3px', background: '#0056b3', marginBottom: '1.2rem' }} />
-            <h2 style={{ fontSize: '1.9rem', color: '#222', marginBottom: '1.2rem' }}>为什么选择我们的课程？</h2>
-            <p style={{ color: '#555', lineHeight: 1.9, marginBottom: '1.5rem' }}>
-              星势力航空科技拥有专业的无人机维修培训基地，配备齐全的实训设备与真实机型，由具备丰富实战经验的技术工程师担任讲师。
+            <h2 style={{ fontSize: '1.9rem', color: '#222', marginBottom: '1.2rem' }}>
+              {configs.course_intro_title || '为什么选择我们的课程？'}
+            </h2>
+            <p style={{ color: '#555', lineHeight: 1.9, marginBottom: '1.5rem', whiteSpace: 'pre-wrap' }}>
+              {configs.course_intro_desc || '星势力航空科技拥有专业的无人机维修培训基地，配备齐全的实训设备与真实机型，由具备丰富实战经验的技术工程师担任讲师。'}
             </p>
             <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-              {['80%实操比例，真机拆装练习','资深工程师全程授课指导','小班制教学，一对一答疑','结业颁发培训证书','终身免费复训一次'].map((item, i) => (
-                <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', color: '#444', fontSize: '0.95rem' }}>
-                  <span style={{ color: '#0056b3', fontWeight: 700, fontSize: '1.1rem' }}>✓</span>
-                  {item}
-                </li>
-              ))}
+              {(configs.course_intro_points || '80%实操比例，真机拆装练习\n资深工程师全程授课指导\n小班制教学，一对一答疑\n结业颁发培训证书\n终身免费复训一次')
+                .split('\n')
+                .map(item => item.trim())
+                .filter(Boolean)
+                .map((item, i) => (
+                  <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', color: '#444', fontSize: '0.95rem' }}>
+                    <span style={{ color: '#0056b3', fontWeight: 700, fontSize: '1.1rem' }}>✓</span>
+                    {item}
+                  </li>
+                ))}
             </ul>
           </div>
           <div style={{ flex: '1 1 360px' }}>
-            <img src="/img_repair.png" alt="维修课程" style={{ width: '100%', height: '360px', objectFit: 'cover', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.12)' }} />
+            <img 
+              src={configs.course_intro_image || '/img_repair.png'} 
+              alt="维修课程" 
+              style={{ width: '100%', height: '360px', objectFit: 'cover', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.12)' }} 
+            />
           </div>
         </div>
       </section>

@@ -1,11 +1,12 @@
 import prisma from '../../../lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { getServerSession } from "next-auth/next";
+import { authOptions } from '../../api/auth/[...nextauth]/route';
 import { redirect } from 'next/navigation';
 import RichEditor from '../../../components/RichEditor';
 import AdminBatchTable from '../../../components/AdminBatchTable';
 export default async function AdminShowcase({ searchParams }) {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   if (!session) redirect('/auth/signin');
 
   const params = searchParams instanceof Promise ? await searchParams : searchParams;
@@ -16,6 +17,8 @@ export default async function AdminShowcase({ searchParams }) {
 
   async function saveItem(formData) {
     'use server';
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error('未授权');
     const idVal = formData.get('id');
     const id = (idVal && !isNaN(parseInt(idVal))) ? parseInt(idVal) : null;
 
@@ -43,6 +46,8 @@ export default async function AdminShowcase({ searchParams }) {
 
   async function deleteItem(formData) {
     'use server';
+    const session = await getServerSession(authOptions);
+    if (!session) throw new Error('未授权');
     const idVal = formData.get('id');
     const id = (idVal && !isNaN(parseInt(idVal))) ? parseInt(idVal) : null;
     if (!id) return;
