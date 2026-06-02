@@ -118,5 +118,11 @@
 - **控制包体限制 (M3)**：将 Next.js 服务端 Server Actions 请求的 `bodySizeLimit` 从 `50mb` 强力调减至安全的 `4mb`，从源头扼杀任何超大 payload 引发资源耗尽的 DoS 攻击隐患。
 - **Nginx 高级安全配置优化 (M1)**：优化 Nginx 反向代理站点配置，添加 X-Frame-Options (DENY)、X-Content-Type-Options (nosniff) 以及严格的 Content-Security-Policy (CSP) 等一系列生产环境级安全响应头。
 
+### 13. ⚙️ 项目合作与维修课程后台管理“标签页”整合升级 (Unified Tabbed Admin & Configuration System)
+- **标签页无缝合并**：将“项目合作”后台和“维修课程”后台重构为极富现代感的 Tab 选项卡管理面板。
+- **合作页面上方与页尾完全动态配置**：现在可在 `/admin/cooperation` 后台的“页面区块配置”选项卡中，一键修改前台页面上方（图一：合作模式标题、副标题、4个卡片的图标与内容）以及页尾（图二：为何选择我们、底部携手合作横幅的标题、描述、按钮文字及链接），实现全站 100% 动态可配，完全摆脱硬编码（Hardcode）。
+- **课程特色介绍与列表二合一**：移除了左侧菜单冗余的“课程特色介绍”子项，并在 `/admin/courses` 的“课程特色配置”选项卡中实现统一管理。访问旧版独立路径 `/admin/courses/intro` 将会被服务端智能且无缝地重定向至最新标签页，保证全站架构简洁美观。
+- **PM2 热重载保障**：配合 `npm run build` 和 `pm2 reload samplesite` 命令，实现零停机生产发布与新特性生效。
+
 ---
 *Generated & maintained with ❤️ by Antigravity AI.*

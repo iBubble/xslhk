@@ -27,6 +27,49 @@ export default async function CooperationPage(props) {
     take: pageSize,
   });
 
+  // 解析合作模式（图一）标题与内容
+  const modesTitle = configs.cooperation_modes_title || '合作模式';
+  const modesSubtitle = configs.cooperation_modes_subtitle || '多种合作方式，灵活匹配您的业务需求';
+  let modesItems = [];
+  try {
+    modesItems = configs.cooperation_modes_items ? JSON.parse(configs.cooperation_modes_items) : [];
+  } catch (e) {
+    console.error('Failed to parse cooperation_modes_items', e);
+  }
+  if (!modesItems || modesItems.length === 0) {
+    modesItems = [
+      { icon: '🎓', title: '产教融合合作', desc: '与高校、职业院校共建无人机专业实训基地，提供课程资源、教具设备及师资培训，联合培养专业人才。' },
+      { icon: '🔧', title: '技术服务合作', desc: '承接企业级无人机维修、改装、飞控调参及技术咨询服务，提供长期技术支持与保障协议。' },
+      { icon: '✈️', title: '飞行作业合作', desc: '为农林、电力、测绘、应急等行业提供无人机飞行作业外包服务，配备持证飞手与专业设备。' },
+      { icon: '🤝', title: '品牌代理合作', desc: '欢迎有资源、有渠道的合作伙伴加入，共同推广星势力航空科技培训课程与技术服务品牌。' }
+    ];
+  }
+
+  // 解析为何选择我们（图二上方）标题与内容
+  const whyTitle = configs.cooperation_why_title || '为何选择我们';
+  const whySubtitle = configs.cooperation_why_subtitle || '专业实力与诚信服务，是合作的最好基础';
+  let whyItems = [];
+  try {
+    whyItems = configs.cooperation_why_items ? JSON.parse(configs.cooperation_why_items) : [];
+  } catch (e) {
+    console.error('Failed to parse cooperation_why_items', e);
+  }
+  if (!whyItems || whyItems.length === 0) {
+    whyItems = [
+      { icon: '🏅', title: '专业资质', desc: 'CAAC认证，规范运营' },
+      { icon: '💪', title: '实力团队', desc: '技术过硬，经验丰富' },
+      { icon: '⚡', title: '高效执行', desc: '快速响应，按时交付' },
+      { icon: '🔒', title: '诚信合作', desc: '合同规范，长期共赢' },
+      { icon: '📈', title: '持续创新', desc: '紧跟行业趋势，技术持续升级' }
+    ];
+  }
+
+  // 获取底部CTA（图二下方）
+  const ctaTitle = configs.cooperation_cta_title || '期待与您携手合作';
+  const ctaSubtitle = configs.cooperation_cta_subtitle || '请填写您的联系方式，我们将在24小时内与您取得联系';
+  const ctaBtnText = configs.cooperation_cta_btn_text || '立即洽谈合作';
+  const ctaBtnLink = configs.cooperation_cta_btn_link || '/contact';
+
   return (
     <>
       <div className="page-hero" style={{ backgroundImage: `url("${configs.banner_cooperation || '/img_service.png'}")` }}>
@@ -42,17 +85,12 @@ export default async function CooperationPage(props) {
       <section style={{ background: '#fff', padding: '80px 5vw' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div className="section-header">
-            <h2>合作模式</h2>
-            <p>多种合作方式，灵活匹配您的业务需求</p>
+            <h2>{modesTitle}</h2>
+            <p>{modesSubtitle}</p>
             <div className="divider" />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '2rem' }}>
-            {[
-              { icon: '🎓', title: '产教融合合作', desc: '与高校、职业院校共建无人机专业实训基地，提供课程资源、教具设备及师资培训，联合培养专业人才。' },
-              { icon: '🔧', title: '技术服务合作', desc: '承接企业级无人机维修、改装、飞控调参及技术咨询服务，提供长期技术支持与保障协议。' },
-              { icon: '✈️', title: '飞行作业合作', desc: '为农林、电力、测绘、应急等行业提供无人机飞行作业外包服务，配备持证飞手与专业设备。' },
-              { icon: '🤝', title: '品牌代理合作', desc: '欢迎有资源、有渠道的合作伙伴加入，共同推广星势力航空科技培训课程与技术服务品牌。' },
-            ].map((item, i) => (
+            {modesItems.map((item, i) => (
               <div key={i} className="hover-border" style={{ padding: '2.5rem', border: '1px solid #e5e7eb', borderRadius: '12px', cursor: 'default' }}>
                 <div style={{ fontSize: '2.2rem', marginBottom: '1.2rem', background: '#e8f0fb', width: '60px', height: '60px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.icon}</div>
                 <h3 style={{ color: '#222', fontSize: '1.15rem', marginBottom: '0.8rem' }}>{item.title}</h3>
@@ -166,22 +204,16 @@ export default async function CooperationPage(props) {
       <section style={{ background: '#fff', padding: '80px 5vw' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
           <div className="section-header">
-            <h2>为何选择我们</h2>
-            <p>专业实力与诚信服务，是合作的最好基础</p>
+            <h2>{whyTitle}</h2>
+            <p>{whySubtitle}</p>
             <div className="divider" />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
-            {[
-              ['🏅', '专业资质', 'CAAC认证，规范运营'],
-              ['💪', '实力团队', '技术过硬，经验丰富'],
-              ['⚡', '高效执行', '快速响应，按时交付'],
-              ['🔒', '诚信合作', '合同规范，长期共赢'],
-              ['📈', '持续创新', '紧跟行业趋势，技术持续升级'],
-            ].map(([icon, title, desc], i) => (
+            {whyItems.map((item, i) => (
               <div key={i} style={{ textAlign: 'center', padding: '1.5rem' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '0.8rem' }}>{icon}</div>
-                <h4 style={{ color: '#222', marginBottom: '0.4rem', fontSize: '1rem' }}>{title}</h4>
-                <p style={{ color: '#888', fontSize: '0.85rem' }}>{desc}</p>
+                <div style={{ fontSize: '2rem', marginBottom: '0.8rem' }}>{item.icon}</div>
+                <h4 style={{ color: '#222', marginBottom: '0.4rem', fontSize: '1rem' }}>{item.title}</h4>
+                <p style={{ color: '#888', fontSize: '0.85rem' }}>{item.desc}</p>
               </div>
             ))}
           </div>
@@ -190,9 +222,9 @@ export default async function CooperationPage(props) {
 
       {/* CTA */}
       <section style={{ background: 'linear-gradient(135deg, #0056b3, #003d82)', padding: '70px 5vw', textAlign: 'center' }}>
-        <h2 style={{ color: '#fff', marginBottom: '1rem' }}>期待与您携手合作</h2>
-        <p style={{ color: 'rgba(255,255,255,0.85)', marginBottom: '2.5rem' }}>请填写您的联系方式，我们将在24小时内与您取得联系</p>
-        <Link href="/contact" className="btn-white">立即洽谈合作</Link>
+        <h2 style={{ color: '#fff', marginBottom: '1rem' }}>{ctaTitle}</h2>
+        <p style={{ color: 'rgba(255,255,255,0.85)', marginBottom: '2.5rem' }}>{ctaSubtitle}</p>
+        <Link href={ctaBtnLink} className="btn-white">{ctaBtnText}</Link>
       </section>
     </>
   );

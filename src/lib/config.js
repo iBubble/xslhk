@@ -64,6 +64,31 @@ const DEFAULT_CONFIGS = {
   course_intro_desc: '星势力航空科技拥有专业的无人机维修培训基地，配备齐全的实训设备与真实机型，由具备丰富实战经验的技术工程师担任讲师。',
   course_intro_points: '80%实操比例，真机拆装练习\n资深工程师全程授课指导\n小班制教学，一对一答疑\n结业颁发培训证书\n终身免费复训一次',
   course_intro_image: '/img_repair.png',
+
+  // 项目合作页面上方（图一）配置
+  cooperation_modes_title: '合作模式',
+  cooperation_modes_subtitle: '多种合作方式，灵活匹配您的业务需求',
+  cooperation_modes_items: JSON.stringify([
+    { icon: '🎓', title: '产教融合合作', desc: '与高校、职业院校共建无人机专业实训基地，提供课程资源、教具设备及师资培训，联合培养专业人才。' },
+    { icon: '🔧', title: '技术服务合作', desc: '承接企业级无人机维修、改装、飞控调参及技术咨询服务，提供长期技术支持与保障协议。' },
+    { icon: '✈️', title: '飞行作业合作', desc: '为农林、电力、测绘、应急等行业提供无人机飞行作业外包服务，配备持证飞手与专业设备。' },
+    { icon: '🤝', title: '品牌代理合作', desc: '欢迎有资源、有渠道的合作伙伴加入，共同推广星势力航空科技培训课程与技术服务品牌。' }
+  ]),
+
+  // 项目合作页面下方（图二）配置
+  cooperation_why_title: '为何选择我们',
+  cooperation_why_subtitle: '专业实力与诚信服务，是合作的最好基础',
+  cooperation_why_items: JSON.stringify([
+    { icon: '🏅', title: '专业资质', desc: 'CAAC认证，规范运营' },
+    { icon: '💪', title: '实力团队', desc: '技术过硬，经验丰富' },
+    { icon: '⚡', title: '高效执行', desc: '快速响应，按时交付' },
+    { icon: '🔒', title: '诚信合作', desc: '合同规范，长期共赢' },
+    { icon: '📈', title: '持续创新', desc: '紧跟行业趋势，技术持续升级' }
+  ]),
+  cooperation_cta_title: '期待与您携手合作',
+  cooperation_cta_subtitle: '请填写您的联系方式，我们将在24小时内与您取得联系',
+  cooperation_cta_btn_text: '立即洽谈合作',
+  cooperation_cta_btn_link: '/contact',
 };
 
 async function ensureInitialized() {

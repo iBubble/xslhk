@@ -12,7 +12,6 @@ export default function AdminLayout({ children }) {
     { name: '首页轮播图', path: '/admin/hero', icon: '🎠' },
     { name: '公司动态', path: '/admin/news', icon: '📰' },
     { name: '维修课程列表', path: '/admin/courses', icon: '🔧' },
-    { name: '课程特色介绍', path: '/admin/courses/intro', icon: '✨', isSub: true },
     { name: '风采展示', path: '/admin/showcase', icon: '🖼️' },
     { name: '项目合作', path: '/admin/cooperation', icon: '🤝' },
     { name: '关于页内容', path: '/admin/about', icon: '🏢' },
