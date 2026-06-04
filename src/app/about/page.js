@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import prisma from '../../lib/prisma';
 import DOMPurify from 'isomorphic-dompurify';
+import { getSystemConfigs } from '../../lib/config';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,13 +10,30 @@ export const metadata = {
   description: '了解云南星势力航空科技有限公司的发展历程、企业使命与服务优势',
 };
 
-import { getSystemConfigs } from '../../lib/config';
-
 export default async function About() {
   const configs = await getSystemConfigs();
   const contents = await prisma.aboutContent.findMany();
   const cm = {};
   contents.forEach(c => { cm[c.section] = c; });
+
+  // 解析“我们的优势”配置
+  const advantagesTitle = configs.about_advantages_title || '我们的优势';
+  const advantagesSubtitle = configs.about_advantages_subtitle || '专业资质认证、丰富实战经验、全方位服务保障';
+  let advantagesItems = [];
+  try {
+    advantagesItems = configs.about_advantages_items ? JSON.parse(configs.about_advantages_items) : [];
+  } catch (e) {
+    console.error('Failed to parse about_advantages_items', e);
+  }
+  if (!advantagesItems || advantagesItems.length === 0) {
+    advantagesItems = [
+      { icon: '🏆', title: 'CAAC认证', desc: '持有民航局认证资质，课程体系符合国家标准' },
+      { icon: '👨‍🔧', title: '专业团队', desc: '核心成员均具备多年无人机维修与培训经验' },
+      { icon: '🔩', title: '设备齐全', desc: '配备先进的检测与维修设备，支持各主流机型' },
+      { icon: '📋', title: '完善体系', desc: '系统化课程设计，理论与实操全面覆盖' }
+    ];
+  }
+
   return (
     <>
       <div className="page-hero" style={{ backgroundImage: `url("${configs.banner_about || '/img_about.png'}")` }}>
@@ -82,22 +100,24 @@ export default async function About() {
         </div>
       </section>
 
+      {/* 我们的优势 */}
       <section style={{ background: '#fff', padding: '80px 5vw' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div className="section-header">
-            <h2>我们的优势</h2>
-            <p>专业资质认证、丰富实战经验、全方位服务保障</p>
+            <h2>{advantagesTitle}</h2>
+            <p>{advantagesSubtitle}</p>
             <div className="divider" />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '2rem' }}>
-            {[
-              { icon: '🏆', title: 'CAAC认证', desc: '持有民航局认证资质，课程体系符合国家标准' },
-              { icon: '👨‍🔧', title: '专业团队', desc: '核心成员均具备多年无人机维修与培训经验' },
-              { icon: '🔩', title: '设备齐全', desc: '配备先进的检测与维修设备，支持各主流机型' },
-              { icon: '📋', title: '完善体系', desc: '系统化课程设计，理论与实操全面覆盖' },
-            ].map((item, i) => (
+            {advantagesItems.map((item, i) => (
               <div key={i} style={{ padding: '2rem', borderRadius: '12px', border: '1px solid #e5e7eb', transition: 'all 0.3s' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '1rem', background: '#e8f0fb', width: '56px', height: '56px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.icon}</div>
+                <div style={{ fontSize: '2rem', marginBottom: '1rem', background: '#e8f0fb', width: '56px', height: '56px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                  {item.icon && (item.icon.startsWith('/') || item.icon.startsWith('http') || item.icon.startsWith('data:')) ? (
+                    <img src={item.icon} alt={item.title} style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+                  ) : (
+                    item.icon
+                  )}
+                </div>
                 <h3 style={{ fontSize: '1.1rem', color: '#222', marginBottom: '0.6rem' }}>{item.title}</h3>
                 <p style={{ fontSize: '0.9rem', color: '#666', lineHeight: 1.7 }}>{item.desc}</p>
               </div>

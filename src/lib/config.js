@@ -89,6 +89,16 @@ const DEFAULT_CONFIGS = {
   cooperation_cta_subtitle: '请填写您的联系方式，我们将在24小时内与您取得联系',
   cooperation_cta_btn_text: '立即洽谈合作',
   cooperation_cta_btn_link: '/contact',
+
+  // 关于页“我们的优势”配置
+  about_advantages_title: '我们的优势',
+  about_advantages_subtitle: '专业资质认证、丰富实战经验、全方位服务保障',
+  about_advantages_items: JSON.stringify([
+    { icon: '🏆', title: 'CAAC认证', desc: '持有民航局认证资质，课程体系符合国家标准' },
+    { icon: '👨‍🔧', title: '专业团队', desc: '核心成员均具备多年无人机维修与培训经验' },
+    { icon: '🔩', title: '设备齐全', desc: '配备先进的检测与维修设备，支持各主流机型' },
+    { icon: '📋', title: '完善体系', desc: '系统化课程设计，理论与实操全面覆盖' }
+  ]),
 };
 
 async function ensureInitialized() {
